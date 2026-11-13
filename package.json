@@ -1,0 +1,14 @@
+{
+  "name": "nation-war",
+  "version": "1.0.0",
+  "description": "국가 전쟁 - 3D 멀티플레이 전쟁 타이쿤 게임",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "peerjs": "^1.5.4",
+    "three": "0.149.0",
+    "ws": "^8.18.0"
+  }
+}

@@ -1,0 +1,5 @@
+node_modules/
+learning.json
+learning-tdm.json
+public/artifact.html
+.claude/
