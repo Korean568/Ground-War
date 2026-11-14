@@ -27,7 +27,7 @@ const UI = {
     while (kf.children.length > 6) kf.lastChild.remove();
     setTimeout(() => d.remove(), 6000);
   },
-  money(n) { return '$' + Math.floor(n).toLocaleString(LANG === 'ko' ? 'ko-KR' : 'en-US'); },
+  money(n) { return 'G$' + Math.floor(n).toLocaleString(LANG === 'ko' ? 'ko-KR' : 'en-US'); },
   // 영어 브라우저면 index.html의 data-en* 속성으로 텍스트 교체
   applyLang() {
     if (LANG !== 'en') return;

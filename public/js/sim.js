@@ -149,6 +149,9 @@ class Sim {
       }
     }
 
+    // 엘리트 유닛: 체력 자동 회복
+    if (T.regen && u.hp < u.maxHp) u.hp = Math.min(u.maxHp, u.hp + T.regen * dt);
+
     if (u.ctrl) { this.updateControlled(u, T, S.input, dt); return; }
 
     // 가장 가까운 적 탐색 + 아군 밀어내기

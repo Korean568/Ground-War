@@ -746,10 +746,10 @@ const R3D = (() => {
   }
   function soldierParts(type, side) {
     const tm = team(side);
-    const isS = type === 'sniper', isM = type === 'medic', isC = type === 'commander';
-    const uni = isS ? 0xffffff : isC ? tm.coat : isM ? tm.uniLight : tm.uni;
-    const ut = isS ? 5 : isC ? 4 : 1;
-    const pants = isS ? 0xffffff : isC ? 0x25272c : tm.uni;
+    const isS = type === 'sniper', isM = type === 'medic', isC = type === 'commander', isSF = type === 'sf';
+    const uni = isS ? 0xffffff : isC ? tm.coat : isM ? tm.uniLight : isSF ? 0x24272b : tm.uni;
+    const ut = isS ? 5 : isC ? 4 : isSF ? 4 : 1;
+    const pants = isS ? 0xffffff : isC ? 0x25272c : isSF ? 0x24272b : tm.uni;
     const pt = isS ? 5 : isC ? 4 : 1;
     const L = new Builder();
     L.box(0.19, 0.46, 0.21, 0, -0.22, 0, pants, pt);
@@ -820,6 +820,32 @@ const R3D = (() => {
       b.box(0.18, 0.04, 0.03, 0, 1.735, 0.115, 0x0a0a0a, 6);
       b.cyl(0.018, 1.7, 0.16, 1.95, -0.2, 0x3a3a3a, 2, 0, 0, 0, 6);
       b.box(0.07, 0.14, 0.1, -0.26, 0.98, 0.04, 0x3b2616, 0);
+    } else if (type === 'marine') {
+      // 전설의 K-해병: 팔각모 + 빨간 명찰 + 전투 조끼
+      b.box(0.48, 0.36, 0.31, 0, 1.3, 0, C.vest, 4);
+      for (const x of [-0.13, 0, 0.13]) b.box(0.1, 0.13, 0.06, x, 1.19, 0.17, C.vest2, 4);
+      b.box(0.15, 0.05, 0.02, 0.11, 1.43, 0.165, 0xc81e1e, 0);
+      b.box(0.15, 0.012, 0.022, 0.11, 1.412, 0.166, 0xf2c230, 0);
+      b.box(0.34, 0.42, 0.18, 0, 1.34, -0.25, C.olive, 4);
+      b.cyl(0.152, 0.12, 0, 1.83, 0, tm.uni, 1, 0, 0, 0, 8);
+      b.cyl(0.155, 0.015, 0, 1.895, 0, tm.uni, 1, 0, 0, 0, 8);
+      b.box(0.22, 0.02, 0.11, 0, 1.775, 0.15, tm.uni, 1, 0.15);
+      b.box(0.055, 0.055, 0.02, 0, 1.84, 0.152, C.gold, 0);
+      b.box(0.18, 0.035, 0.03, 0, 1.735, 0.12, 0x0a0a0a, 6);
+    } else if (isSF) {
+      // 특전사가 된 전설의 K-해병: 검은 전투복, 복면, 검은 베레모, 야간투시경, 해병 명찰은 그대로
+      b.box(0.5, 0.38, 0.32, 0, 1.3, 0, 0x16181a, 4);
+      for (const x of [-0.14, -0.05, 0.05, 0.14]) b.box(0.08, 0.12, 0.06, x, 1.18, 0.17, 0x2b2e33, 4);
+      b.box(0.15, 0.05, 0.02, 0.11, 1.43, 0.17, 0xc81e1e, 0);
+      b.box(0.15, 0.012, 0.022, 0.11, 1.412, 0.171, 0xf2c230, 0);
+      b.box(0.06, 0.06, 0.02, -0.12, 1.44, 0.17, C.gold, 0);
+      b.box(0.36, 0.44, 0.2, 0, 1.34, -0.26, 0x1c1e21, 4);
+      b.sph(0.124, 0.142, 0.132, 0, 1.72, 0.006, 0x121315, 0);
+      b.box(0.17, 0.03, 0.02, 0, 1.74, 0.13, C.skin, 0);
+      b.add('hemi:12:6', 0.165, 0.075, 0.175, -0.02, 1.805, 0, 0, 0, 0.22, 0x0b0b0d, 0);
+      b.box(0.05, 0.05, 0.02, -0.08, 1.83, 0.14, C.gold, 0);
+      for (const x of [-0.045, 0.045]) b.cyl(0.028, 0.09, x, 1.79, 0.16, 0x1e2a1e, 2, HP, 0, 0, 8);
+      b.box(0.14, 0.04, 0.05, 0, 1.79, 0.11, 0x222222, 2);
     }
     const A = new Builder();
     const muzzle = armsParts(A, type, uni, ut, tm);
@@ -1740,6 +1766,8 @@ class Renderer {
         body.add(fl);
         root.scale.setScalar(1.15);
       }
+      if (type === 'marine') root.scale.setScalar(1.08);
+      if (type === 'sf') root.scale.setScalar(1.12);
     } else {
       mk(G.body, body);
       if (G.turret) {
@@ -2004,7 +2032,7 @@ class Renderer {
         this.sfx('death', e.x, e.y + 1, e.z);
       }
       if (e.ks === this.mySide) {
-        this.popup('+$' + GAME.KILL_REWARD, '#7CFC7C', e.x, e.y + 3, e.z, 1.4, 2.5);
+        this.popup('+G$' + GAME.KILL_REWARD, '#7CFC7C', e.x, e.y + 3, e.z, 1.4, 2.5);
         if (this.inMatch()) this.sfx('coin');
       }
     } else if (e.k === 'heal') {

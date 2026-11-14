@@ -1,4 +1,4 @@
-# Ground War
+# Ground Wars
 
 3D multiplayer war tycoon game (browser, Three.js)
 
@@ -34,14 +34,16 @@ Local test: start the server and open `http://localhost:3000/artifact.html?mockr
 | Unit | Cost | HP | Notes |
 |---|---|---|---|
 | 🪖 Infantry | Free (3s cooldown) | 50 | Basic soldier |
-| ⛑️ Medic | $100 | 150 | Heals nearby allies |
-| 🛡️ Tank | $100 | 100 | Splash damage, can't hit air |
-| 🚁 Heli | $500 | 250 | Fast, strong vs armor |
-| 🚙 APC | $1000 | 500 | Tough, anti-air |
-| 🎯 Sniper | $5000 | 50 | Extreme range, one-shot kills |
+| ⛑️ Medic | G$10 | 150 | Heals nearby allies |
+| 🛡️ Tank | G$50 | 100 | Splash damage, can't hit air |
+| 🚁 Heli | G$100 | 250 | Fast, strong vs armor |
+| 🚙 APC | G$500 | 300 | Tough, anti-air |
+| 🎯 Sniper | G$1000 | 50 | Extreme range, one-shot kills |
+| 🎖️ Legendary K-Marine | G$5000 | 450 | Rapid fire, regenerates HP |
+| 🦅 Legendary K-Marine turned Special Forces | G$10000 | 800 | Long-range fire + grenades, fast regen |
 | ⭐ Commander | Starting unit | 100 | **If it dies, you lose** |
 
-- Each kill: **$50** / Win: **$10,000**
+- Each kill: **G$50** / Win: **G$10,000** (G$ = Ground Dollars)
 - Money keeps piling up in your wallet (tycoon). Build **factories** during a match to raise income, and buy permanent **Base Upgrades** from the menu.
 - **Join the fight**: click an ally, press `F` → WASD move, mouse aim, click to fire, `Q` to return
 - If no opponent is found within 15 seconds, you play the **learning AI**
@@ -103,14 +105,16 @@ Local test: start the server and open `http://localhost:3000/artifact.html?mockr
 | 병과 | 가격 | HP | 특징 |
 |---|---|---|---|
 | 🪖 보병 | 무료 (3초 쿨타임) | 50 | 기본 병사 |
-| ⛑️ 의무병 | $100 | 150 | 주변 아군 치료 |
-| 🛡️ 탱크병 | $100 | 탱크 100 | 범위 포격, 공중 공격 불가 |
-| 🚁 헬기병 | $500 | 헬기 250 | 빠름, 기갑에 강함 |
-| 🚙 장갑차병 | $1000 | 장갑차 500 | 튼튼함, 대공 |
-| 🎯 저격수 | $5000 | 50 | 초장거리 일격 |
+| ⛑️ 의무병 | G$10 | 150 | 주변 아군 치료 |
+| 🛡️ 탱크병 | G$50 | 탱크 100 | 범위 포격, 공중 공격 불가 |
+| 🚁 헬기병 | G$100 | 헬기 250 | 빠름, 기갑에 강함 |
+| 🚙 장갑차병 | G$500 | 장갑차 300 | 튼튼함, 대공 |
+| 🎯 저격수 | G$1000 | 50 | 초장거리 일격 |
+| 🎖️ 전설의 K-해병대원 | G$5000 | 450 | 빠른 연사, 체력 자동 회복 |
+| 🦅 특전사가 된 전설의 K-해병대원 | G$10000 | 800 | 장거리 정밀 사격 + 수류탄, 빠른 회복 |
 | ⭐ 사령관 | 기본 | 100 | **죽으면 패배** |
 
-- 적 1명 처치: **$50** / 승리: **$10,000**
+- 적 1명 처치: **G$50** / 승리: **G$10,000** (G$ = 그라운드 달러)
 - 돈은 지갑에 계속 쌓이며(타이쿤), 경기 중 **공장**을 지어 수입을 늘리고, 메뉴의 **기지 업그레이드**로 영구 강화
 - **직접 참전**: 아군 클릭 후 `F` → WASD 이동, 마우스 조준, 클릭 사격, `Q` 복귀
 - 매칭 15초 안에 상대가 없으면 **학습형 AI**와 대전

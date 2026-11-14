@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ground War</title>
+  <title>Ground Wars</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -34,8 +34,8 @@
     </div>
 
     <div id="money-box">
-      <div id="hud-money">$0</div>
-      <div id="hud-income" data-en="+$5/s">+$5/초</div>
+      <div id="hud-money">G$0</div>
+      <div id="hud-income" data-en="+G$5/s">+G$5/초</div>
       <div id="hud-army" data-en="Army 0 / 50">병력 0 / 50</div>
     </div>
 
@@ -45,7 +45,7 @@
     <div id="bottombar">
       <div id="buy-buttons"></div>
       <div id="actions">
-        <button class="act" id="btn-factory"><b data-en="🏭 Factory">🏭 공장 건설</b><small id="factory-cost">$200</small><kbd>E</kbd></button>
+        <button class="act" id="btn-factory"><b data-en="🏭 Factory">🏭 공장 건설</b><small id="factory-cost">G$200</small><kbd>E</kbd></button>
         <div class="stance">
           <button class="act" id="btn-attack"><b data-en="⚔️ Attack">⚔️ 공격</b><kbd>Z</kbd></button>
           <button class="act" id="btn-defend"><b data-en="🛡️ Defend">🛡️ 방어</b><kbd>X</kbd></button>
@@ -76,7 +76,7 @@
   <!-- ===== 타이틀 ===== -->
   <div class="screen" id="screen-title">
     <div class="panel title-panel">
-      <div class="logo">Ground War</div>
+      <div class="logo">Ground Wars</div>
       <div class="logo-sub" data-en="3D Multiplayer War Tycoon">3D 멀티플레이 전쟁 타이쿤</div>
       <div id="title-form">
         <label><span data-en="Commander Name">지휘관 이름</span><input id="inp-name" maxlength="12" placeholder="이름을 입력하세요" data-en-ph="Enter your name"></label>
@@ -88,7 +88,7 @@
   <!-- ===== 메인 메뉴 ===== -->
   <div class="screen hidden" id="screen-menu">
     <div class="panel menu-panel">
-      <div class="logo small">Ground War</div>
+      <div class="logo small">Ground Wars</div>
       <div class="profile-card">
         <img class="flag-mini" id="menu-flag" alt="">
         <div class="pc-main">
@@ -191,7 +191,7 @@
     <div class="panel wide">
       <h2 data-en="📖 Unit Guide">📖 병과 도감</h2>
       <div class="unit-table" id="unit-table"></div>
-      <p class="note" data-en="Counters: Tank → Infantry / Heli → Armor / APC → Heli. $50 per kill, $10,000 per win!">상성: 탱크 → 보병 / 헬기 → 기갑 / 장갑차 → 헬기. 적 1명 처치 시 $50, 승리 시 $10,000!</p>
+      <p class="note" data-en="Counters: Tank → Infantry / Heli → Armor / APC → Heli. G$50 per kill, G$10,000 per win!">상성: 탱크 → 보병 / 헬기 → 기갑 / 장갑차 → 헬기. 적 1명 처치 시 G$50, 승리 시 G$10,000!</p>
       <button id="btn-units-back" class="ghost" data-en="Back">돌아가기</button>
     </div>
   </div>

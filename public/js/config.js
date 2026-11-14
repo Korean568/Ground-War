@@ -5,19 +5,24 @@ function tr(ko, en) { return LANG === 'ko' ? ko : en; }
 // cat: inf(보병류) / armor(기갑) / air(공중)
 const UNIT_TYPES = {
   infantry:  { name: tr('보병', 'Infantry'),     icon: '🪖', cost: 0,    hp: 50,  speed: 5.0, range: 22, dmg: 7,  rate: 1.0,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '1', desc: tr('기본 병사 (무료, 쿨타임)', 'Basic soldier (free, cooldown)') },
-  medic:     { name: tr('의무병', 'Medic'),   icon: '⛑️', cost: 100,  hp: 150, speed: 5.0, range: 16, dmg: 4,  rate: 1.2,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '2', heal: 7, healRange: 11, desc: tr('주변 아군 치료', 'Heals nearby allies') },
-  tank:      { name: tr('탱크병', 'Tank'),   icon: '🛡️', cost: 100,  hp: 100, speed: 3.6, range: 28, dmg: 26, rate: 2.4,  cat: 'armor', hitAir: false, radius: 2.2, height: 1.4, key: '3', splash: 4, desc: tr('범위 포격 (공중 공격 불가)', 'Splash damage (no anti-air)') },
-  heli:      { name: tr('헬기병', 'Heli'),   icon: '🚁', cost: 500,  hp: 250, speed: 8.0, range: 26, dmg: 11, rate: 0.5,  cat: 'air',   hitAir: true,  radius: 2.6, height: 0.6, key: '4', fly: 10, desc: tr('빠른 공중 유닛, 기갑에 강함', 'Fast air unit, strong vs armor') },
-  apc:       { name: tr('장갑차병', 'APC'), icon: '🚙', cost: 1000, hp: 500, speed: 5.5, range: 24, dmg: 6,  rate: 0.22, cat: 'armor', hitAir: true,  radius: 2.3, height: 1.9, key: '5', desc: tr('튼튼함, 대공 기관총', 'Tough, anti-air machine gun') },
-  sniper:    { name: tr('저격수', 'Sniper'),   icon: '🎯', cost: 5000, hp: 50,  speed: 4.0, range: 65, dmg: 95, rate: 3.2,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '6', desc: tr('초장거리 일격필살', 'Extreme range, one-shot kills') },
+  medic:     { name: tr('의무병', 'Medic'),   icon: '⛑️', cost: 10,  hp: 150, speed: 5.0, range: 16, dmg: 4,  rate: 1.2,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '2', heal: 7, healRange: 11, desc: tr('주변 아군 치료', 'Heals nearby allies') },
+  tank:      { name: tr('탱크병', 'Tank'),   icon: '🛡️', cost: 50,  hp: 100, speed: 3.6, range: 28, dmg: 26, rate: 2.4,  cat: 'armor', hitAir: false, radius: 2.2, height: 1.4, key: '3', splash: 4, desc: tr('범위 포격 (공중 공격 불가)', 'Splash damage (no anti-air)') },
+  heli:      { name: tr('헬기병', 'Heli'),   icon: '🚁', cost: 100,  hp: 250, speed: 8.0, range: 26, dmg: 11, rate: 0.5,  cat: 'air',   hitAir: true,  radius: 2.6, height: 0.6, key: '4', fly: 10, desc: tr('빠른 공중 유닛, 기갑에 강함', 'Fast air unit, strong vs armor') },
+  apc:       { name: tr('장갑차병', 'APC'), icon: '🚙', cost: 500, hp: 300, speed: 5.5, range: 24, dmg: 6,  rate: 0.22, cat: 'armor', hitAir: true,  radius: 2.3, height: 1.9, key: '5', desc: tr('튼튼함, 대공 기관총', 'Tough, anti-air machine gun') },
+  sniper:    { name: tr('저격수', 'Sniper'),   icon: '🎯', cost: 1000, hp: 50,  speed: 4.0, range: 65, dmg: 95, rate: 3.2,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '6', desc: tr('초장거리 일격필살', 'Extreme range, one-shot kills') },
   commander: { name: tr('사령관', 'Commander'),   icon: '⭐', cost: 0,    hp: 100, speed: 4.5, range: 22, dmg: 12, rate: 1.1,  cat: 'inf',   hitAir: true,  radius: 0.9, height: 1.6, desc: tr('죽으면 패배!', 'If it dies, you lose!') },
+  // 엘리트 유닛
+  marine:    { name: tr('전설의 K-해병대원', 'Legendary K-Marine'), short: tr('K-해병', 'K-Marine'), icon: '🎖️', cost: 5000, hp: 450, speed: 6.0, range: 32, dmg: 24, rate: 0.35, cat: 'inf', hitAir: true, radius: 0.9, height: 1.5, key: '7', regen: 4, desc: tr('누구도 막을 수 없는 전설의 해병. 빠른 연사, 체력 자동 회복', 'An unstoppable legend. Rapid fire, regenerates HP') },
+  sf:        { name: tr('특전사가 된 전설의 K-해병대원', 'Legendary K-Marine turned Special Forces'), short: tr('특전사', 'Spec Ops'), icon: '🦅', cost: 10000, hp: 800, speed: 7.0, range: 42, dmg: 42, rate: 0.3, cat: 'inf', hitAir: true, radius: 0.95, height: 1.55, key: '8', regen: 8, splash: 3, desc: tr('전설이 특전사가 되었다. 장거리 정밀 사격 + 수류탄, 빠른 회복', 'The legend joined Special Forces. Long-range precision fire + grenades, fast regen') },
 };
-const BUY_ORDER = ['infantry', 'medic', 'tank', 'heli', 'apc', 'sniper'];
-const TYPE_LIST = ['infantry', 'medic', 'tank', 'heli', 'apc', 'sniper', 'commander'];
+const BUY_ORDER = ['infantry', 'medic', 'tank', 'heli', 'apc', 'sniper', 'marine', 'sf'];
+const TYPE_LIST = ['infantry', 'medic', 'tank', 'heli', 'apc', 'sniper', 'commander', 'marine', 'sf'];
 
 // 공격자 유형 → 대상 분류별 피해 배율 (상성)
 const DMG_MUL = {
   infantry:  { inf: 1.0, armor: 0.4, air: 0.6 },
+  marine:    { inf: 1.4, armor: 1.0, air: 1.0 },
+  sf:        { inf: 1.5, armor: 1.3, air: 1.2 },
   medic:     { inf: 1.0, armor: 0.3, air: 0.5 },
   tank:      { inf: 1.2, armor: 1.6, air: 0 },
   heli:      { inf: 1.1, armor: 1.6, air: 0.8 },

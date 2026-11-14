@@ -1,13 +1,13 @@
 // ===== 국가 전쟁: 게임 흐름 / 입력 / HUD =====
 const AI_NATIONS = [tr('붉은 제국', 'Red Empire'), tr('강철 연방', 'Steel Federation'), tr('북방 왕국', 'Northern Kingdom'), tr('사막 술탄국', 'Desert Sultanate'), tr('기계 공화국', 'Machine Republic'), tr('폭풍 군단', 'Storm Legion'), tr('얼음 왕조', 'Ice Dynasty')];
 const TUT_STEPS = [
-  { text: tr('<b>Ground War</b>에 오신 것을 환영합니다!<br>상대 <b>사령관 ⭐</b>을 처치하면 승리합니다.<br>내 사령관이 죽으면 패배!', 'Welcome to <b>Ground War</b>!<br>Defeat the enemy <b>Commander ⭐</b> to win.<br>If your Commander dies, you lose!'), next: true },
+  { text: tr('<b>Ground Wars</b>에 오신 것을 환영합니다!<br>상대 <b>사령관 ⭐</b>을 처치하면 승리합니다.<br>내 사령관이 죽으면 패배!', 'Welcome to <b>Ground Wars</b>!<br>Defeat the enemy <b>Commander ⭐</b> to win.<br>If your Commander dies, you lose!'), next: true },
   { text: tr('하단의 <b>🪖 보병</b> 버튼(또는 <b>1</b>키)을 눌러 무료 보병을 생산하세요.', 'Press the <b>🪖 Infantry</b> button below (or key <b>1</b>) to train free infantry.'), check: m => (m.myStats.buy.infantry || 0) >= 1 },
-  { text: tr('돈으로 다른 병과를 살 수 있어요.<br><b>🛡️ 탱크병 ($100)</b>을 구입해보세요. (<b>3</b>키)', 'Money buys other units.<br>Try buying a <b>🛡️ Tank ($100)</b>. (key <b>3</b>)'), check: m => (m.myStats.buy.tank || 0) >= 1 },
+  { text: tr('돈으로 다른 병과를 살 수 있어요.<br><b>🛡️ 탱크병 (G$50)</b>을 구입해보세요. (<b>3</b>키)', 'Money buys other units.<br>Try buying a <b>🛡️ Tank (G$50)</b>. (key <b>3</b>)'), check: m => (m.myStats.buy.tank || 0) >= 1 },
   { text: tr('<b>타이쿤</b> 요소! <b>🏭 공장</b>을 건설하면 초당 수입이 늘어납니다. (<b>E</b>키)<br>왼쪽 위에서 돈과 수입을 확인하세요.', '<b>Tycoon</b> time! Build a <b>🏭 Factory</b> to raise your income. (key <b>E</b>)<br>Money and income are shown at the top left.'), check: m => m.myStats.factories >= 1 },
   { text: tr('<b>⚔️ 공격</b> 버튼(<b>Z</b>키)으로 군대를 진격시키세요.<br><b>🛡️ 방어</b>(<b>X</b>키)는 기지 앞을 지킵니다.', 'Press <b>⚔️ Attack</b> (key <b>Z</b>) to send your army forward.<br><b>🛡️ Defend</b> (key <b>X</b>) holds the line at your base.'), check: m => App.sideInfo(m.mySide).stance === 'attack' },
   { text: tr('이제 <b>직접 참전</b>! 아군을 클릭하고 <b>F</b>키, 또는 <b>🎮 직접 참전</b> 버튼.<br>WASD 이동 · 마우스 조준 · 클릭 사격 · <b>Q</b> 복귀', 'Now <b>join the fight</b>! Click an ally and press <b>F</b>, or use <b>🎮 Join Fight</b>.<br>WASD move · Mouse aim · Click fire · <b>Q</b> return'), check: m => m.possessId > 0 },
-  { text: tr('훌륭해요! 적 1명 처치 시 <b>$50</b>, 승리 시 <b>$10,000</b>!<br>상성: 탱크→보병, 헬기→기갑, 장갑차→헬기<br>이제 <b>적 사령관을 처치</b>하세요!', 'Great job! <b>$50</b> per kill, <b>$10,000</b> per win!<br>Counters: Tank→Infantry, Heli→Armor, APC→Heli<br>Now <b>take out the enemy Commander</b>!'), next: true },
+  { text: tr('훌륭해요! 적 1명 처치 시 <b>G$50</b>, 승리 시 <b>G$10,000</b>!<br>상성: 탱크→보병, 헬기→기갑, 장갑차→헬기<br>이제 <b>적 사령관을 처치</b>하세요!', 'Great job! <b>G$50</b> per kill, <b>G$10,000</b> per win!<br>Counters: Tank→Infantry, Heli→Armor, APC→Heli<br>Now <b>take out the enemy Commander</b>!'), next: true },
 ];
 
 const App = {
@@ -140,7 +140,7 @@ const App = {
       const b = document.createElement('button');
       b.className = 'buy'; b.id = 'buy-' + t;
       b.title = T.desc;
-      b.innerHTML = `<kbd>${i + 1}</kbd><span class="ic">${T.icon}</span><span class="nm">${T.name}</span><span class="cs">${T.cost ? UI.money(T.cost) : tr('무료', 'Free')}</span><span class="hp">HP ${T.hp}</span><div class="cdmask"></div>`;
+      b.innerHTML = `<kbd>${i + 1}</kbd><span class="ic">${T.icon}</span><span class="nm">${T.short || T.name}</span><span class="cs">${T.cost ? UI.money(T.cost) : tr('무료', 'Free')}</span><span class="hp">HP ${T.hp}</span><div class="cdmask"></div>`;
       b.onclick = () => this.cmd({ c: 'buy', t });
       bb.appendChild(b);
     });
@@ -766,7 +766,7 @@ const App = {
     const me = m.mySide, other = 1 - me;
     const S = this.sideInfo(me), O = this.sideInfo(other);
     $('hud-money').textContent = UI.money(S.money);
-    $('hud-income').textContent = tr(`+$${(S.inc || 0).toFixed(1)}/초 · 공장 ${S.factories}/${GAME.FACTORY_MAX}`, `+$${(S.inc || 0).toFixed(1)}/s · Factories ${S.factories}/${GAME.FACTORY_MAX}`);
+    $('hud-income').textContent = tr(`+G$${(S.inc || 0).toFixed(1)}/초 · 공장 ${S.factories}/${GAME.FACTORY_MAX}`, `+G$${(S.inc || 0).toFixed(1)}/s · Factories ${S.factories}/${GAME.FACTORY_MAX}`);
     const army = this.myArmy();
     $('hud-army').textContent = tr(`병력 ${army} / ${GAME.UNIT_CAP}`, `Army ${army} / ${GAME.UNIT_CAP}`);
     $('hud-time').textContent = UI.time(m.sim ? m.sim.t : (m.view ? m.view.t : 0));

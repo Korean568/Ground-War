@@ -1,7 +1,7 @@
 {
   "name": "the-ground-war",
   "version": "1.0.0",
-  "description": "Ground War - 3D multiplayer war tycoon game",
+  "description": "Ground Wars - 3D multiplayer war tycoon game",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"

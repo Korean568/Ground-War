@@ -460,7 +460,7 @@ const TdmGame = {
   },
   hitmark(head) {
     const h = $('t-hitmark');
-    h.textContent = head ? tr('💀 헤드샷 +$', '💀 Headshot +$') + GAME.KILL_REWARD : tr('✖ 처치 +$', '✖ Kill +$') + GAME.KILL_REWARD;
+    h.textContent = head ? tr('💀 헤드샷 +G$', '💀 Headshot +G$') + GAME.KILL_REWARD : tr('✖ 처치 +G$', '✖ Kill +G$') + GAME.KILL_REWARD;
     h.classList.remove('show'); void h.offsetWidth; h.classList.add('show');
   },
   addFeed(e) {

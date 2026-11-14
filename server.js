@@ -149,7 +149,7 @@ setInterval(() => {
 
 server.listen(PORT, () => {
   console.log('==========================================');
-  console.log(tr('  Ground War 서버 실행 중', '  Ground War server running'));
+  console.log(tr('  Ground Wars 서버 실행 중', '  Ground Wars server running'));
   console.log(tr(`  이 컴퓨터:   http://localhost:${PORT}`, `  This PC:    http://localhost:${PORT}`));
   const nets = os.networkInterfaces();
   for (const name in nets) for (const n of nets[name]) {
