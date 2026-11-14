@@ -2,7 +2,7 @@
 
 3D multiplayer war tycoon game (browser, Three.js)
 
-## ▶ Play now: https://korean568.github.io/The-Ground-War/
+## ▶ Play now: https://korean568.github.io/Ground-War/
 
 The game follows your browser language: Korean browsers get Korean, everything else gets English.
 
