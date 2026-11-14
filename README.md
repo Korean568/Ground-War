@@ -2,7 +2,7 @@
 
 3D 멀티플레이 전쟁 타이쿤 게임 (브라우저, Three.js)
 
-## ▶ 바로 플레이: https://korean568.github.io/nation-war/
+## ▶ 바로 플레이: https://korean568.github.io/war/
 
 - PC와 모바일 모두 지원 (모바일은 가로 화면 권장, 메뉴에서 모바일 모드 전환 가능)
 - 웹 버전 멀티플레이: 같은 페이지를 연 사람끼리 P2P(WebRTC)로 연결됩니다. 친구와 동시에 같은 모드를 고르세요.
