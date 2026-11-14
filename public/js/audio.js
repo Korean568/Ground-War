@@ -72,6 +72,7 @@ const Sound = (() => {
   function unlock() {
     if (!ensure()) return;
     if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    prerender();
     if (!ambient) startAmbient();
   }
   ['pointerdown', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, unlock, { capture: true, passive: true }));
@@ -99,23 +100,20 @@ const Sound = (() => {
     const gn = ctx.createGain();
     gn.gain.value = g;
     let node = gn;
-    if (dist > 35) {
-      const lp = ctx.createBiquadFilter();
-      lp.type = 'lowpass';
-      lp.frequency.value = Math.max(700, 16000 / (1 + (dist - 35) / 18));
-      node.connect(lp); node = lp;
-    }
-    if (ctx.createStereoPanner && pan !== 0) {
+    if (ctx.createStereoPanner && Math.abs(pan) > 0.05) {
       const p = ctx.createStereoPanner();
       p.pan.value = pan;
       node.connect(p); node = p;
     }
     node.connect(bus);
+    gn._tail = node;
     return gn;
   }
 
   // ---------- 합성 프리미티브 ----------
+  let rendering = false;      // 미리 렌더링 중이면 활성 카운트에 넣지 않음
   function track(src, endT) {
+    if (rendering) { src.stop(endT); return; }
     active++;
     src.onended = () => { active--; };
     src.stop(endT);
@@ -251,26 +249,65 @@ const Sound = (() => {
     },
   };
 
+  // ---------- 미리 렌더링한 소리 뱅크 (렉 방지) ----------
+  // 소리마다 몇 가지 버전을 한 번만 합성해 두고, 재생할 때는 버퍼 1개 + 볼륨/패닝만 사용
+  const BANK = {};
+  const DUR = { rifle: 0.45, smg: 0.4, pistol: 0.35, sniper: 1.6, cannon: 2.2, mg: 0.45, heligun: 0.5, rocket: 0.75,
+    explosion: 3.0, bigexplosion: 4.2, death: 0.35, impact: 0.15, coin: 0.7, build: 1.2, spawn: 0.2, click: 0.1, victory: 2.1, defeat: 2.6 };
+  const SIZES = [0.8, 1.3, 2.0];
+  let banking = null;
+  function prerender() {
+    if (banking || !ctx || !window.OfflineAudioContext) return banking;
+    banking = (async () => {
+      const real = ctx;
+      for (const name in SYN) {
+        const n = ['victory', 'defeat', 'click', 'coin', 'build'].includes(name) ? 1 : 3;
+        const list = [];
+        for (let i = 0; i < n; i++) {
+          let off;
+          try { off = new OfflineAudioContext(1, Math.ceil(real.sampleRate * (DUR[name] || 1)), real.sampleRate); } catch (e) { continue; }
+          ctx = off; rendering = true;
+          try { SYN[name](off.destination, 0.003, name === 'explosion' ? { size: SIZES[i] } : {}); } catch (e) { /* 무시 */ }
+          ctx = real; rendering = false;
+          try { list.push(await off.startRendering()); } catch (e) { /* 무시 */ }
+        }
+        BANK[name] = list;
+        await new Promise(r => setTimeout(r, 0)); // 메인 스레드 양보
+      }
+    })();
+    return banking;
+  }
+
   // ---------- 재생 ----------
   function play(name, o) {
     if (!ready()) return;
     const cfg = CFG[name];
-    const fn = SYN[name];
-    if (!cfg || !fn) return;
+    const bank = BANK[name];
+    if (!cfg || !bank || !bank.length) return;
     const now = ctx.currentTime;
-    // 프레임(약 1/30초) 전체 예산: 우선순위 낮은 소리부터 버림
+    // 프레임 예산: 동시에 너무 많이 울리지 않게
     if (now - frameT > 0.033) { frameT = now; frameN = 0; }
-    if (frameN >= 7 && cfg.pri < 4) return;
-    if (active > 90 && cfg.pri < 5) return;
-    // 이름별 창 스로틀
-    if (now - (lastAt[name] || 0) > 0.06) { lastAt[name] = now; winCount[name] = 0; }
-    if (winCount[name] >= cfg.max) return;
+    if (frameN >= 4 && cfg.pri < 4) return;
+    if (active > 24 && cfg.pri < 5) return;
+    if (now - (lastAt[name] || 0) > 0.08) { lastAt[name] = now; winCount[name] = 0; }
+    if (winCount[name] >= Math.min(cfg.max, 2)) return;
     const vol = (o && o.vol !== undefined ? o.vol : 1);
     const dst = output(o, cfg, vol);
     if (!dst) return;
     winCount[name]++;
     frameN++;
-    fn(dst, now + 0.005 + Math.random() * 0.01, o);
+    let buf;
+    if (name === 'explosion') {
+      const s = (o && o.size) || 1;
+      buf = bank[s < 1.05 ? 0 : s < 1.65 ? 1 : 2] || bank[0];
+    } else buf = bank[Math.floor(Math.random() * bank.length)];
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    if (!cfg.ui) src.playbackRate.value = 0.94 + Math.random() * 0.12;
+    src.connect(dst);
+    active++;
+    src.onended = () => { active--; try { dst.disconnect(); if (dst._tail && dst._tail !== dst) dst._tail.disconnect(); } catch (e) { /* 무시 */ } };
+    src.start(now + 0.002);
   }
 
   // ---------- 환경음: 바람 + 헬기 로터 ----------
@@ -290,27 +327,9 @@ const Sound = (() => {
     src.connect(bp); bp.connect(g); g.connect(bus);
     src.start(); lfo.start(); lfo2.start();
     ambient = { src, g };
-
-    // 로터: 저역 노이즈를 ~11Hz로 진폭 변조
-    const rs = ctx.createBufferSource();
-    rs.buffer = noiseBuf; rs.loop = true;
-    const rl = ctx.createBiquadFilter(); rl.type = 'lowpass'; rl.frequency.value = 320; rl.Q.value = 1.2;
-    const am = ctx.createGain(); am.gain.value = 0.5;
-    const ro = ctx.createOscillator(); ro.frequency.value = 11.5;
-    const rog = ctx.createGain(); rog.gain.value = 0.5;
-    ro.connect(rog); rog.connect(am.gain);
-    const thump = ctx.createOscillator(); thump.type = 'sine'; thump.frequency.value = 46;
-    const tg = ctx.createGain(); tg.gain.value = 0.25;
-    thump.connect(tg); tg.connect(am);
-    const level = ctx.createGain(); level.gain.value = 0;
-    rs.connect(rl); rl.connect(am); am.connect(level); level.connect(bus);
-    rs.start(); ro.start(); thump.start();
-    rotor = { level };
   }
-  function setRotor(v) {
-    if (!rotor || !ctx) return;
-    rotor.level.gain.setTargetAtTime(Math.max(0, Math.min(1, v)) * 0.55, ctx.currentTime, 0.25);
-  }
+  // 헬기 로터 루프는 항상 돌아가며 렉을 만들어서 제거 (호환용 빈 함수)
+  function setRotor() {}
   function setScene(level) {
     if (S.sceneLevel === level) return;
     S.sceneLevel = level;
@@ -333,7 +352,26 @@ const Sound = (() => {
   window.addEventListener('keydown', e => {
     if (e.code !== 'KeyM' || (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA'))) return;
     const m = toggle();
-    if (typeof UI !== 'undefined' && UI.toast) UI.toast(m ? '🔇 소리 꺼짐 (M)' : '🔊 소리 켜짐 (M)', 1200);
+    refreshButtons();
+    if (typeof UI !== 'undefined' && UI.toast) UI.toast(m ? T('🔇 소리 꺼짐 (M)', '🔇 Sound off (M)') : T('🔊 소리 켜짐 (M)', '🔊 Sound on (M)'), 1200);
+  });
+  // 메뉴 / 일시정지 화면에 소리 버튼 (모바일은 M 키가 없으므로)
+  const T = (ko, en) => (typeof tr === 'function' ? tr(ko, en) : ko);
+  const soundBtns = [];
+  function refreshButtons() {
+    for (const b of soundBtns) b.textContent = S.muted ? T('🔇 소리: 꺼짐', '🔇 Sound: Off') : T('🔊 소리: 켜짐', '🔊 Sound: On');
+  }
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const sel of ['#screen-menu .menu-grid', '#screen-pause .panel']) {
+      const host = document.querySelector(sel);
+      if (!host) continue;
+      const b = document.createElement('button');
+      b.className = 'sound-btn';
+      b.onclick = () => { unlock(); toggle(); refreshButtons(); };
+      host.appendChild(b);
+      soundBtns.push(b);
+    }
+    refreshButtons();
   });
   // UI 버튼 클릭음
   document.addEventListener('click', e => {

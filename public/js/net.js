@@ -245,7 +245,7 @@ const RoomNet = {
     if (offer && this.pres.st === 'queue') {
       this.partner = offer.peer;
       this.setP({ st: 'match', with: offer.peer });
-      Net.emit('matched', { type: 'matched', side: 1, opponent: { name: String(P(offer).name || '상대'), level: Number(P(offer).lv) || 1 } });
+      Net.emit('matched', { type: 'matched', side: 1, opponent: { name: String(P(offer).name || tr('상대', 'Opponent')), level: Number(P(offer).lv) || 1 } });
       return;
     }
     if (this.pres.st === 'queue') {
@@ -262,7 +262,7 @@ const RoomNet = {
     if (t && P(t).st === 'match' && P(t).with === my) {
       this.partner = t.peer;
       this.setP({ st: 'match' });
-      Net.emit('matched', { type: 'matched', side: 0, opponent: { name: String(P(t).name || '상대'), level: Number(P(t).lv) || 1 } });
+      Net.emit('matched', { type: 'matched', side: 0, opponent: { name: String(P(t).name || tr('상대', 'Opponent')), level: Number(P(t).lv) || 1 } });
     } else if (!t || (P(t).st !== 'queue' && P(t).st !== 'match') || Date.now() - this.offerT > 5000) {
       this.setP({ st: 'queue', with: null });
     }
@@ -281,7 +281,7 @@ const RoomNet = {
     this.partnerPres = pp;
     if (pp.ready && pp.fl && !this.flagSeen) {
       this.flagSeen = true;
-      Net.emit('flag', { flag: pp.fl.join(''), nation: String(pp.nat || '상대국'), money: Number(pp.money) || 0, upg: pp.upg || {}, level: Number(pp.lv) || 1 });
+      Net.emit('flag', { flag: pp.fl.join(''), nation: String(pp.nat || tr('상대국', 'Enemy Nation')), money: Number(pp.money) || 0, upg: pp.upg || {}, level: Number(pp.lv) || 1 });
     }
     if (pp.go && !this.startSeen && this.flagSeen) {
       this.startSeen = true;

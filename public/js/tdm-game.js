@@ -28,6 +28,13 @@ const TdmGame = {
       b.onclick = () => this.chooseWeapon(k);
       pick.appendChild(b);
     });
+    // 저격 조준경 화면
+    const sc = document.createElement('div');
+    sc.id = 't-scope'; sc.className = 'hidden';
+    sc.style.cssText = 'position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle at center, transparent 0, transparent 31vmin, rgba(0,0,0,0.95) 31.5vmin);';
+    sc.innerHTML = '<div style="position:absolute;left:50%;top:0;bottom:0;width:1px;background:rgba(0,0,0,0.85)"></div><div style="position:absolute;top:50%;left:0;right:0;height:1px;background:rgba(0,0,0,0.85)"></div><div style="position:absolute;left:50%;top:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:#e33"></div>';
+    $('tdm-hud').prepend(sc);
+    this.scopeEl = sc;
     const cv = App.r.canvas;
     cv.addEventListener('mousedown', e => {
       if (!this.active || !this.alive()) return;
@@ -60,15 +67,15 @@ const TdmGame = {
     this.mode = mode; this.role = null; this.hostPeer = null; this.startNow = false; this.lobby = true;
     App.stopMatching && App.stopMatching(false);
     UI.show('screen-tdm-lobby');
-    $('tl-title').textContent = mode === 'koth' ? '⛰️ 언덕 위의 왕' : '🎯 팀 데스매치';
-    $('tl-sub').textContent = '연결 중...';
+    $('tl-title').textContent = mode === 'koth' ? tr('⛰️ 언덕 위의 왕', '⛰️ King of the Hill') : tr('🎯 팀 데스매치', '🎯 Team Deathmatch');
+    $('tl-sub').textContent = tr('연결 중...', 'Connecting...');
     $('tl-players').innerHTML = ''; $('tl-count').textContent = ''; $('tl-analysis').innerHTML = '';
     $('btn-tl-start').classList.add('hidden');
     const ok = await Net.connect();
     if (!this.lobby) return;
     this.net = ok ? TdmNetAdapter.get() : null;
     if (!this.net) {
-      $('tl-sub').textContent = '온라인 상대가 없어 패턴을 학습한 AI들과 싸웁니다';
+      $('tl-sub').textContent = tr('온라인 상대가 없어 패턴을 학습한 AI들과 싸웁니다', 'No players online. You will fight AI that learned player patterns');
       setTimeout(() => { if (this.lobby) this.hostStart([]); }, 1200);
       return;
     }
@@ -88,7 +95,7 @@ const TdmGame = {
     if (!my) {
       // 방 정보를 못 받으면 3초 후 혼자(AI와) 시작
       this.noPeerT = (this.noPeerT || 0) + 1;
-      if (this.noPeerT > 15) { this.noPeerT = 0; this.net = null; $('tl-sub').textContent = '연결된 상대가 없어 AI들과 싸웁니다'; this.hostStart([]); }
+      if (this.noPeerT > 15) { this.noPeerT = 0; this.net = null; $('tl-sub').textContent = tr('연결된 상대가 없어 AI들과 싸웁니다', 'Nobody connected. Fighting AI soldiers'); this.hostStart([]); }
       return;
     }
     this.noPeerT = 0;
@@ -105,10 +112,10 @@ const TdmGame = {
       if (lower) { this.role = 'guest'; this.hostPeer = lower.peer; this.net.setP({ th: null }); return; }
       const joiners = peers.filter(p => !p.sameTab && P(p).tm && P(p).tm.g === my);
       const left = Math.max(0, Math.ceil((this.lobbyEnd - Date.now()) / 1000));
-      this.net.setP({ th: { mode: this.mode, ph: 'lobby', left, pl: [String(Profile.data.name).slice(0, 14) + ' (방장)', ...joiners.map(j => String(P(j).tm.name || '?').slice(0, 14))] } });
-      $('tl-sub').textContent = '방장입니다. 다른 플레이어를 기다리는 중... (빈 자리는 학습형 AI가 채웁니다)';
-      $('tl-count').textContent = `${left}초 후 시작`;
-      this.renderLobbyPlayers([Profile.data.name + ' (나)', ...joiners.map(j => P(j).tm.name)]);
+      this.net.setP({ th: { mode: this.mode, ph: 'lobby', left, pl: [String(Profile.data.name).slice(0, 14) + tr(' (방장)', ' (host)'), ...joiners.map(j => String(P(j).tm.name || '?').slice(0, 14))] } });
+      $('tl-sub').textContent = tr('방장입니다. 다른 플레이어를 기다리는 중... (빈 자리는 학습형 AI가 채웁니다)', 'You are the host. Waiting for players... (AI fills empty slots)');
+      $('tl-count').textContent = tr(`${left}초 후 시작`, `Starting in ${left}s`);
+      this.renderLobbyPlayers([Profile.data.name + tr(' (나)', ' (you)'), ...joiners.map(j => P(j).tm.name)]);
       $('btn-tl-start').classList.remove('hidden');
       if (left <= 0 || this.startNow) this.hostStart(joiners);
     } else {
@@ -118,11 +125,11 @@ const TdmGame = {
       this.net.setP({ tm: { mode: this.mode, st: 'join', g: this.hostPeer, name: Profile.data.name, wpn: this.wpn || 'rifle', pat: TdmLearn.summary() } });
       $('btn-tl-start').classList.add('hidden');
       if (th.ph === 'lobby') {
-        $('tl-sub').textContent = '방에 참가했습니다. 방장이 곧 시작합니다';
-        $('tl-count').textContent = `${th.left}초 후 시작`;
+        $('tl-sub').textContent = tr('방에 참가했습니다. 방장이 곧 시작합니다', 'Joined the room. The host will start soon');
+        $('tl-count').textContent = tr(`${th.left}초 후 시작`, `Starting in ${th.left}s`);
         this.renderLobbyPlayers([...(th.pl || [])]);
       } else if (th.ph === 'play') {
-        $('tl-sub').textContent = '진행 중인 경기에 합류하는 중...';
+        $('tl-sub').textContent = tr('진행 중인 경기에 합류하는 중...', 'Joining the match in progress...');
         const mine = (th.hn || []).find(a => a[1] === my);
         if (mine) this.guestStart(th, mine[0]);
       }
@@ -130,7 +137,7 @@ const TdmGame = {
   },
   renderLobbyPlayers(names) {
     $('tl-players').innerHTML = names.map(n => `<div class="tl-p">👤 ${String(n).replace(/[<>&]/g, '')}</div>`).join('') +
-      `<div class="tl-p ai">🤖 AI ${Math.max(0, TDM.TEAM_SIZE * 2 - names.length)}명이 빈 자리를 채움</div>`;
+      `<div class="tl-p ai">🤖 ${tr(`AI ${Math.max(0, TDM.TEAM_SIZE * 2 - names.length)}명이 빈 자리를 채움`, `${Math.max(0, TDM.TEAM_SIZE * 2 - names.length)} AI soldiers fill the empty slots`)}</div>`;
   },
 
   // 호스트: 국가 추첨, 팀 배정, 시뮬레이션 시작
@@ -142,7 +149,7 @@ const TdmGame = {
     const teams = drawTwoCountries();
     // 먼저 뽑힌 국가부터: 사람들을 번갈아 배정 (혼자면 봇은 모두 상대편 국가 + 우리 편 지원)
     const humans = [{ peer: my, name: Profile.data.name, team: 0, wpn: this.wpn || 'rifle' }];
-    joiners.forEach((j, i) => humans.push({ peer: j.peer, name: String((j.presence.tm || {}).name || '플레이어').slice(0, 14), team: (i + 1) % 2, wpn: (j.presence.tm || {}).wpn || 'rifle' }));
+    joiners.forEach((j, i) => humans.push({ peer: j.peer, name: String((j.presence.tm || {}).name || tr('플레이어', 'Player')).slice(0, 14), team: (i + 1) % 2, wpn: (j.presence.tm || {}).wpn || 'rifle' }));
     const sums = [TdmLearn.summary()];
     if (this.net) for (const p of this.net.peers()) if (!p.sameTab && p.presence && p.presence.tm && p.presence.tm.pat) sums.push(p.presence.tm.pat);
     if (Net.globalLearnTdm) sums.push(...Net.globalLearnTdm);
@@ -190,11 +197,12 @@ const TdmGame = {
     $('t-name-0').textContent = this.names[0]; $('t-name-1').textContent = this.names[1];
     $('t-flag-0').src = this.flags[0]; $('t-flag-1').src = this.flags[1];
     $('t-team-0').classList.toggle('mine', myTeam === 0); $('t-team-1').classList.toggle('mine', myTeam === 1);
-    $('t-mode').textContent = this.mode === 'koth' ? '⛰️ 언덕 위의 왕' : '🎯 팀 데스매치';
+    $('t-mode').textContent = this.mode === 'koth' ? tr('⛰️ 언덕 위의 왕', '⛰️ King of the Hill') : tr('🎯 팀 데스매치', '🎯 Team Deathmatch');
     $('t-hill').classList.toggle('hidden', this.mode !== 'koth');
-    $('btn-surrender').textContent = '🚪 경기 나가기';
+    $('btn-surrender').textContent = tr('🚪 경기 나가기', '🚪 Leave match');
     App.r.camMode = 'fps'; App.r.followId = myId;
-    UI.announce(`${COUNTRIES[teams[myTeam]].name} 소속으로 참전!`, '#f6c343', 2500);
+    App.r.camera.near = 0.05; App.r.camera.updateProjectionMatrix();
+    UI.announce(tr(`${COUNTRIES[teams[myTeam]].name} 소속으로 참전!`, `Fighting for ${COUNTRIES[teams[myTeam]].name}!`), '#f6c343', 2500);
     if (this.analysis && this.analysis.length) UI.toast('🧠 ' + this.analysis.slice(0, 2).join(' · '), 5000);
     App.lockPointer();
   },
@@ -274,9 +282,11 @@ const TdmGame = {
     if (this.ammo[this.wpn] <= 0) this.reloadT = W.reload;
     const r2 = v => Math.round(v * 1000) / 1000;
     const sh = { n: ++this.shotSeq, w: this.wpn, ox: r2(aim.o.x), oy: r2(aim.o.y), oz: r2(aim.o.z), dx: r2(aim.d.x), dy: r2(aim.d.y), dz: r2(aim.d.z) };
-    // 내 총알은 바로 그리기
+    // 내 총알은 바로 그리기 (총구에서 시작)
     const L = Math.min(TdmPhys.rayBoxes(aim.o, aim.d, W.range), W.range);
-    App.r.handleEvent({ k: 'shot', t: W.fx, a: [this.me.x, 1.5, this.me.z], b: [aim.o.x + aim.d.x * L, aim.o.y + aim.d.y * L, aim.o.z + aim.d.z * L] });
+    App.r.viewKick(this.wpn);
+    const tip = App.r.viewmodelTip() || [aim.o.x, aim.o.y - 0.1, aim.o.z];
+    App.r.handleEvent({ k: 'shot', t: W.fx, a: tip, b: [aim.o.x + aim.d.x * L, aim.o.y + aim.d.y * L, aim.o.z + aim.d.z * L] });
     this.recoil = (this.recoil || 0) + (W.pellets ? 0.05 : W.zoom ? 0.04 : 0.012);
     if (this.sim) this.sim.humanShot(this.myPeer, sh);
     else { this.shots.push(sh); if (this.shots.length > 10) this.shots.shift(); }
@@ -370,13 +380,22 @@ const TdmGame = {
     // 카메라
     const W = TDM.WEAPONS[this.wpn];
     const zoom = this.aimHeld && alive ? (W.zoom || 1.5) : 1;
-    const fov = 55 / zoom;
+    const fov = 72 / zoom;
     if (Math.abs(App.r.camera.fov - fov) > 0.1) { App.r.camera.fov += (fov - App.r.camera.fov) * Math.min(1, dt * 14); App.r.camera.updateProjectionMatrix(); }
     if (alive) {
+      // 1인칭: 눈높이 카메라, 내 몸은 숨기고 총만 보이기
       App.r.camMode = 'fps'; App.r.followId = this.myId;
-      const aim = App.r.updateFollowCamera(this.myId, this.yaw, this.pitch + this.recoil);
+      if (mm) mm.root.visible = false;
+      const scoped = this.aimHeld && this.wpn === 'sniper';
+      App.r.setViewmodel(!scoped, this.wpn);
+      this.scopeEl.classList.toggle('hidden', !scoped);
+      const k = this.keys;
+      const moving = !!(Touch.axis.x || Touch.axis.y || k.KeyW || k.KeyA || k.KeyS || k.KeyD);
+      const aim = App.r.updateFirstPerson(this.me.x, meY + 1.62, this.me.z, this.yaw, this.pitch + this.recoil, this.wpn, moving, fdt);
       if (aim && (App.pointerLocked || App.noLock)) this.tryFire(aim);
     } else {
+      App.r.setViewmodel(false);
+      this.scopeEl.classList.add('hidden');
       App.r.camMode = 'rts';
       Object.assign(App.r.cam, { x: this.me.x * 0.5, z: this.myTeam === 0 ? 40 : -40, dist: 70, yaw: this.myTeam === 0 ? 0 : Math.PI, pitch: 0.9 });
     }
@@ -396,14 +415,14 @@ const TdmGame = {
       if (p.sameTab || !tm || tm.g !== my || tm.mode !== this.mode) continue;
       present.add(p.peer);
       let s = this.sim.findHuman(p.peer);
-      if (!s) { s = this.sim.addHuman({ peer: p.peer, name: String(tm.name || '플레이어').slice(0, 14), wpn: tm.wpn }); if (s) UI.toast(`👤 ${s.name} 님이 ${COUNTRIES[this.teams[s.team]].name} 팀으로 합류!`); continue; }
+      if (!s) { s = this.sim.addHuman({ peer: p.peer, name: String(tm.name || tr('플레이어', 'Player')).slice(0, 14), wpn: tm.wpn }); if (s) UI.toast(tr(`👤 ${s.name} 님이 ${COUNTRIES[this.teams[s.team]].name} 팀으로 합류!`, `👤 ${s.name} joined ${COUNTRIES[this.teams[s.team]].name}!`)); continue; }
       if (tm.wpn && TDM.WEAPONS[tm.wpn]) s.wpn = tm.wpn;
       if (tm.me && tm.me.q !== this.lastStateQ[p.peer]) { this.lastStateQ[p.peer] = tm.me.q; this.sim.humanState(p.peer, tm.me); }
       for (const sh of (tm.sh || [])) if (sh && sh.n > (this.lastShotN[p.peer] || 0)) { this.lastShotN[p.peer] = sh.n; this.sim.humanShot(p.peer, sh); }
       for (const g of (tm.gr || [])) if (g && g.n > (this.lastGrN[p.peer] || 0)) { this.lastGrN[p.peer] = g.n; this.sim.humanGrenade(p.peer, g); }
     }
     for (const s of this.sim.soldiers) if (s.human && s.human !== my && !present.has(s.human)) {
-      UI.toast(`👤 ${s.name} 님이 나갔습니다 (AI가 대신함)`);
+      UI.toast(tr(`👤 ${s.name} 님이 나갔습니다 (AI가 대신함)`, `👤 ${s.name} left (AI took over)`));
       this.sim.removeHuman(s.human);
     }
   },
@@ -413,7 +432,7 @@ const TdmGame = {
     const th = h && h.presence && h.presence.th;
     if (!th) {
       this.lostT = (this.lostT || 0) + 1;
-      if (this.lostT > 300 && !this.ended) { this.ended = true; UI.announce('방장이 나갔습니다', '#f87171', 2500); setTimeout(() => this.finish(null), 2500); }
+      if (this.lostT > 300 && !this.ended) { this.ended = true; UI.announce(tr('방장이 나갔습니다', 'The host left'), '#f87171', 2500); setTimeout(() => this.finish(null), 2500); }
       return;
     }
     this.lostT = 0;
@@ -434,14 +453,14 @@ const TdmGame = {
       if (e.id === this.myId) this.killedBy = e.killer;
       return;
     }
-    if (e.k === 'cap') { const n = this.names[e.team]; UI.announce(`⛰️ ${n} 거점 점령! +${TDM.HILL.bonus}점`, e.team === this.myTeam ? '#4ade80' : '#f87171', 2200); return; }
+    if (e.k === 'cap') { const n = this.names[e.team]; UI.announce(tr(`⛰️ ${n} 거점 점령! +${TDM.HILL.bonus}점`, `⛰️ ${n} captured the hill! +${TDM.HILL.bonus}`), e.team === this.myTeam ? '#4ade80' : '#f87171', 2200); return; }
     if (e.k === 'over') { this.onOver(e.w); return; }
     if (e.k === 'spawn') return;
     App.r.handleEvent(e);
   },
   hitmark(head) {
     const h = $('t-hitmark');
-    h.textContent = head ? '💀 헤드샷 +$' + GAME.KILL_REWARD : '✖ 처치 +$' + GAME.KILL_REWARD;
+    h.textContent = head ? tr('💀 헤드샷 +$', '💀 Headshot +$') + GAME.KILL_REWARD : tr('✖ 처치 +$', '✖ Kill +$') + GAME.KILL_REWARD;
     h.classList.remove('show'); void h.offsetWidth; h.classList.add('show');
   },
   addFeed(e) {
@@ -459,7 +478,7 @@ const TdmGame = {
   onMyDeath() {
     const sols = this.sim ? this.sim.soldiers : this.view.soldiers;
     const k = sols.find(s => s.id === this.killedBy);
-    $('t-dead-msg').textContent = k ? `💀 ${k.name}에게 당했습니다` : '💀 사망';
+    $('t-dead-msg').textContent = k ? tr(`💀 ${k.name}에게 당했습니다`, `💀 Killed by ${k.name}`) : tr('💀 사망', '💀 You died');
     $('t-dead').classList.remove('hidden');
     this.renderWpnPick();
     this.fireHeld = false;
@@ -482,16 +501,16 @@ const TdmGame = {
     $('t-hp-num').textContent = Math.ceil(hp);
     const W = TDM.WEAPONS[this.wpn];
     $('t-wpn-name').textContent = `${W.icon} ${W.name}`;
-    $('t-ammo').textContent = this.reloadT > 0 ? '재장전 중...' : `${this.ammo[this.wpn]} / ${W.mag}`;
+    $('t-ammo').textContent = this.reloadT > 0 ? tr('재장전 중...', 'Reloading...') : `${this.ammo[this.wpn]} / ${W.mag}`;
     $('t-gren').textContent = `💣 x${this.gren}`;
     $('t-cross').classList.toggle('zoom', this.aimHeld);
-    if (s && !s.alive) $('t-dead-timer').textContent = `${Math.max(0, s.respawnT).toFixed(1)}초 후 부활`;
+    if (s && !s.alive) $('t-dead-timer').textContent = tr(`${Math.max(0, s.respawnT).toFixed(1)}초 후 부활`, `Respawn in ${Math.max(0, s.respawnT).toFixed(1)}s`);
     // 거점
     if (this.mode === 'koth') {
       const H = this.sim ? [this.sim.hill.owner, this.sim.hill.prog[0] * 10, this.sim.hill.prog[1] * 10, this.sim.hill.contested ? 1 : 0] : (this.view && this.view.hill) || [-1, 0, 0, 0];
       $('t-hill-0').style.width = Math.min(100, H[1] / (TDM.HILL.cap * 10) * 100) + '%';
       $('t-hill-1').style.width = Math.min(100, H[2] / (TDM.HILL.cap * 10) * 100) + '%';
-      $('t-hill-text').textContent = H[3] ? '⚔️ 거점 교전 중!' : H[0] >= 0 ? `⛰️ 거점: ${this.names[H[0]]}` : '⛰️ 거점: 중립';
+      $('t-hill-text').textContent = H[3] ? tr('⚔️ 거점 교전 중!', '⚔️ Hill contested!') : H[0] >= 0 ? tr(`⛰️ 거점: ${this.names[H[0]]}`, `⛰️ Hill: ${this.names[H[0]]}`) : tr('⛰️ 거점: 중립', '⛰️ Hill: Neutral');
       if (this.hillOwnerShown !== H[0]) {
         this.hillOwnerShown = H[0];
         this.hillRing.material.color.set(H[0] >= 0 ? SIDE_COLORS[H[0]] : 0xffffff);
@@ -507,7 +526,7 @@ const TdmGame = {
       const sols = this.sim ? this.sim.soldiers : (this.view ? this.view.soldiers : []);
       b.innerHTML = [0, 1].map(team => {
         const rows = sols.filter(x => x.team === team).sort((a, c) => c.kills - a.kills || a.deaths - c.deaths).slice(0, 12);
-        return `<div class="tb-col"><div class="tb-head" style="color:${SIDE_CSS[team]}"><img src="${this.flags[team]}"> ${this.names[team]} · ${sc[team]}점</div>` +
+        return `<div class="tb-col"><div class="tb-head" style="color:${SIDE_CSS[team]}"><img src="${this.flags[team]}"> ${this.names[team]} · ${sc[team]}${tr('점', ' pts')}</div>` +
           rows.map(x => `<div class="tb-row${x.id === this.myId ? ' me' : ''}${x.human ? ' human' : ''}"><span>${x.human ? '👤' : '🤖'} ${String(x.name).replace(/[<>&]/g, '')}</span><span>${x.kills} / ${x.deaths}</span></div>`).join('') + '</div>';
       }).join('');
     }
@@ -516,7 +535,7 @@ const TdmGame = {
   onOver(w) {
     if (this.ended) return;
     this.ended = true;
-    const msg = w === this.myTeam ? '🏆 승리!' : w < 0 ? '무승부' : '패배...';
+    const msg = w === this.myTeam ? tr('🏆 승리!', '🏆 Victory!') : w < 0 ? tr('무승부', 'Draw') : tr('패배...', 'Defeat...');
     UI.announce(msg, w === this.myTeam ? '#f6c343' : '#f87171', 3000);
     setTimeout(() => this.finish(w), 3200);
   },
@@ -542,19 +561,19 @@ const TdmGame = {
     if (Net.mode === 'ws') Net.send({ type: 'learn', stats: { tdm: TdmLearn.summary() } });
     const sc = this.sim ? this.sim.score : (this.view ? this.view.score : [0, 0]);
     this.cleanup();
-    $('result-title').textContent = win ? '🏆 승리!' : w === null ? '경기 종료' : w < 0 ? '무승부' : '패배...';
+    $('result-title').textContent = win ? tr('🏆 승리!', '🏆 Victory!') : w === null ? tr('경기 종료', 'Match over') : w < 0 ? tr('무승부', 'Draw') : tr('패배...', 'Defeat...');
     $('result-title').className = 'result-title ' + (win ? 'win' : 'lose');
-    $('result-sub').textContent = `${this.names[0]} ${sc[0]} : ${sc[1]} ${this.names[1]}  (${this.mode === 'koth' ? '언덕 위의 왕' : '팀 데스매치'})`;
+    $('result-sub').textContent = `${this.names[0]} ${sc[0]} : ${sc[1]} ${this.names[1]}  (${this.mode === 'koth' ? tr('언덕 위의 왕', 'King of the Hill') : tr('팀 데스매치', 'Team Deathmatch')})`;
     const rows = [
-      ['소속 국가', this.names[this.myTeam]],
-      ['처치 / 사망', `${kills} / ${deaths}`],
-      ['처치 보상', UI.money(kills * GAME.KILL_REWARD)],
-      ['승리 보상', win ? '+' + UI.money(GAME.WIN_REWARD) : '-'],
-      ['지갑', `${UI.money(before)} → <b>${UI.money(P.money)}</b>`],
-      ['경험치', `+${xp} XP` + (Profile.level() > prevLevel ? ` · <b>레벨 업! Lv.${Profile.level()}</b>` : '')],
+      [tr('소속 국가', 'Your country'), this.names[this.myTeam]],
+      [tr('처치 / 사망', 'Kills / Deaths'), `${kills} / ${deaths}`],
+      [tr('처치 보상', 'Kill reward'), UI.money(kills * GAME.KILL_REWARD)],
+      [tr('승리 보상', 'Victory bonus'), win ? '+' + UI.money(GAME.WIN_REWARD) : '-'],
+      [tr('지갑', 'Wallet'), `${UI.money(before)} → <b>${UI.money(P.money)}</b>`],
+      [tr('경험치', 'XP'), `+${xp} XP` + (Profile.level() > prevLevel ? tr(` · <b>레벨 업! Lv.${Profile.level()}</b>`, ` · <b>Level up! Lv.${Profile.level()}</b>`) : '')],
     ];
     $('result-list').innerHTML = rows.map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join('') +
-      '<p class="note">🧠 AI가 이번 경기에서 당신의 무기 선택, 이동 경로, 거점 공략 패턴을 학습했습니다.</p>';
+      '<p class="note">' + tr('🧠 AI가 이번 경기에서 당신의 무기 선택, 이동 경로, 거점 공략 패턴을 학습했습니다.', '🧠 The AI learned your weapon choices, routes and hill tactics from this match.') + '</p>';
     App.againMode = this.mode;
     UI.show('screen-result');
   },
@@ -568,11 +587,13 @@ const TdmGame = {
     if (this.net) this.net.setP({ tm: null, th: null });
     if (this.mapGroup) App.r.scene.remove(this.mapGroup);
     App.r.clearMatch();
-    App.r.camera.fov = 55; App.r.camera.updateProjectionMatrix();
+    App.r.setViewmodel(false);
+    if (this.scopeEl) this.scopeEl.classList.add('hidden');
+    App.r.camera.fov = 55; App.r.camera.near = 0.3; App.r.camera.updateProjectionMatrix();
     App.r.camMode = 'rts';
     $('tdm-hud').classList.add('hidden');
     $('screen-pause').classList.add('hidden');
-    $('btn-surrender').textContent = '🏳️ 항복';
+    $('btn-surrender').textContent = tr('🏳️ 항복', '🏳️ Surrender');
     if (document.pointerLockElement) document.exitPointerLock();
     this.sim = null; this.view = null;
     App.startDemo();

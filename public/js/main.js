@@ -1,13 +1,13 @@
 // ===== 국가 전쟁: 게임 흐름 / 입력 / HUD =====
-const AI_NATIONS = ['붉은 제국', '강철 연방', '북방 왕국', '사막 술탄국', '기계 공화국', '폭풍 군단', '얼음 왕조'];
+const AI_NATIONS = [tr('붉은 제국', 'Red Empire'), tr('강철 연방', 'Steel Federation'), tr('북방 왕국', 'Northern Kingdom'), tr('사막 술탄국', 'Desert Sultanate'), tr('기계 공화국', 'Machine Republic'), tr('폭풍 군단', 'Storm Legion'), tr('얼음 왕조', 'Ice Dynasty')];
 const TUT_STEPS = [
-  { text: '<b>The Ground War</b>에 오신 것을 환영합니다!<br>상대 <b>사령관 ⭐</b>을 처치하면 승리합니다.<br>내 사령관이 죽으면 패배!', next: true },
-  { text: '하단의 <b>🪖 보병</b> 버튼(또는 <b>1</b>키)을 눌러 무료 보병을 생산하세요.', check: m => (m.myStats.buy.infantry || 0) >= 1 },
-  { text: '돈으로 다른 병과를 살 수 있어요.<br><b>🛡️ 탱크병 ($100)</b>을 구입해보세요. (<b>3</b>키)', check: m => (m.myStats.buy.tank || 0) >= 1 },
-  { text: '<b>타이쿤</b> 요소! <b>🏭 공장</b>을 건설하면 초당 수입이 늘어납니다. (<b>E</b>키)<br>왼쪽 위에서 돈과 수입을 확인하세요.', check: m => m.myStats.factories >= 1 },
-  { text: '<b>⚔️ 공격</b> 버튼(<b>Z</b>키)으로 군대를 진격시키세요.<br><b>🛡️ 방어</b>(<b>X</b>키)는 기지 앞을 지킵니다.', check: m => App.sideInfo(m.mySide).stance === 'attack' },
-  { text: '이제 <b>직접 참전</b>! 아군을 클릭하고 <b>F</b>키, 또는 <b>🎮 직접 참전</b> 버튼.<br>WASD 이동 · 마우스 조준 · 클릭 사격 · <b>Q</b> 복귀', check: m => m.possessId > 0 },
-  { text: '훌륭해요! 적 1명 처치 시 <b>$50</b>, 승리 시 <b>$10,000</b>!<br>상성: 탱크→보병, 헬기→기갑, 장갑차→헬기<br>이제 <b>적 사령관을 처치</b>하세요!', next: true },
+  { text: tr('<b>Ground War</b>에 오신 것을 환영합니다!<br>상대 <b>사령관 ⭐</b>을 처치하면 승리합니다.<br>내 사령관이 죽으면 패배!', 'Welcome to <b>Ground War</b>!<br>Defeat the enemy <b>Commander ⭐</b> to win.<br>If your Commander dies, you lose!'), next: true },
+  { text: tr('하단의 <b>🪖 보병</b> 버튼(또는 <b>1</b>키)을 눌러 무료 보병을 생산하세요.', 'Press the <b>🪖 Infantry</b> button below (or key <b>1</b>) to train free infantry.'), check: m => (m.myStats.buy.infantry || 0) >= 1 },
+  { text: tr('돈으로 다른 병과를 살 수 있어요.<br><b>🛡️ 탱크병 ($100)</b>을 구입해보세요. (<b>3</b>키)', 'Money buys other units.<br>Try buying a <b>🛡️ Tank ($100)</b>. (key <b>3</b>)'), check: m => (m.myStats.buy.tank || 0) >= 1 },
+  { text: tr('<b>타이쿤</b> 요소! <b>🏭 공장</b>을 건설하면 초당 수입이 늘어납니다. (<b>E</b>키)<br>왼쪽 위에서 돈과 수입을 확인하세요.', '<b>Tycoon</b> time! Build a <b>🏭 Factory</b> to raise your income. (key <b>E</b>)<br>Money and income are shown at the top left.'), check: m => m.myStats.factories >= 1 },
+  { text: tr('<b>⚔️ 공격</b> 버튼(<b>Z</b>키)으로 군대를 진격시키세요.<br><b>🛡️ 방어</b>(<b>X</b>키)는 기지 앞을 지킵니다.', 'Press <b>⚔️ Attack</b> (key <b>Z</b>) to send your army forward.<br><b>🛡️ Defend</b> (key <b>X</b>) holds the line at your base.'), check: m => App.sideInfo(m.mySide).stance === 'attack' },
+  { text: tr('이제 <b>직접 참전</b>! 아군을 클릭하고 <b>F</b>키, 또는 <b>🎮 직접 참전</b> 버튼.<br>WASD 이동 · 마우스 조준 · 클릭 사격 · <b>Q</b> 복귀', 'Now <b>join the fight</b>! Click an ally and press <b>F</b>, or use <b>🎮 Join Fight</b>.<br>WASD move · Mouse aim · Click fire · <b>Q</b> return'), check: m => m.possessId > 0 },
+  { text: tr('훌륭해요! 적 1명 처치 시 <b>$50</b>, 승리 시 <b>$10,000</b>!<br>상성: 탱크→보병, 헬기→기갑, 장갑차→헬기<br>이제 <b>적 사령관을 처치</b>하세요!', 'Great job! <b>$50</b> per kill, <b>$10,000</b> per win!<br>Counters: Tank→Infantry, Heli→Armor, APC→Heli<br>Now <b>take out the enemy Commander</b>!'), next: true },
 ];
 
 const App = {
@@ -15,6 +15,7 @@ const App = {
   keys: {}, last: 0, hudT: 0, pointerLocked: false, rotating: false, lastMX: 0,
 
   init() {
+    UI.applyLang();
     Profile.load();
     if (!Profile.data.flag) { Profile.data.flag = Flags.random(); Profile.save(); }
     this.r = new Renderer($('game-container'));
@@ -66,15 +67,15 @@ const App = {
   // ---------- UI 바인딩 ----------
   bindUI() {
     $('btn-title-start').onclick = () => {
-      const n = $('inp-name').value.trim() || '지휘관';
+      const n = $('inp-name').value.trim() || tr('지휘관', 'Commander');
       Profile.data.name = n;
-      if (!Profile.data.nation) Profile.data.nation = n + ' 공화국';
+      if (!Profile.data.nation) Profile.data.nation = n + tr(' 공화국', ' Republic');
       Profile.save();
       this.showMenu();
     };
     $('inp-name').onkeydown = e => { if (e.key === 'Enter') $('btn-title-start').click(); };
     $('btn-match').onclick = () => {
-      if (Profile.isNewbie()) { UI.toast('처음이시군요! 튜토리얼(쉬운 AI)부터 시작합니다', 2500); this.prepareAI(true); }
+      if (Profile.isNewbie()) { UI.toast(tr('처음이시군요! 튜토리얼(쉬운 AI)부터 시작합니다', 'First time? Starting with the tutorial (easy AI)'), 2500); this.prepareAI(true); }
       else this.startMatching();
     };
     $('btn-tutorial').onclick = () => this.prepareAI(true);
@@ -84,11 +85,11 @@ const App = {
       const b = $('btn-reset');
       if (!b.dataset.armed) {
         b.dataset.armed = '1';
-        b.textContent = '⚠️ 한 번 더 누르면 초기화';
-        setTimeout(() => { delete b.dataset.armed; b.textContent = '🔄 프로필 초기화'; }, 3000);
+        b.textContent = tr('⚠️ 한 번 더 누르면 초기화', '⚠️ Click again to reset');
+        setTimeout(() => { delete b.dataset.armed; b.textContent = tr('🔄 프로필 초기화', '🔄 Reset Profile'); }, 3000);
         return;
       }
-      delete b.dataset.armed; b.textContent = '🔄 프로필 초기화';
+      delete b.dataset.armed; b.textContent = tr('🔄 프로필 초기화', '🔄 Reset Profile');
       Profile.reset(); Profile.data.flag = Flags.random(); Profile.save();
       $('inp-name').value = ''; UI.show('screen-title');
     };
@@ -103,8 +104,8 @@ const App = {
       try {
         this.pre.myFlag = await Flags.fromFile(f);
         Flags.draw($('flag-preview'), this.pre.myFlag);
-        UI.toast('국기가 업로드되었습니다!');
-      } catch (err) { UI.toast('이미지를 불러올 수 없습니다'); }
+        UI.toast(tr('국기가 업로드되었습니다!', 'Flag uploaded!'));
+      } catch (err) { UI.toast(tr('이미지를 불러올 수 없습니다', 'Could not load image')); }
       e.target.value = '';
     };
     $('btn-flag-random').onclick = () => {
@@ -139,7 +140,7 @@ const App = {
       const b = document.createElement('button');
       b.className = 'buy'; b.id = 'buy-' + t;
       b.title = T.desc;
-      b.innerHTML = `<kbd>${i + 1}</kbd><span class="ic">${T.icon}</span><span class="nm">${T.name}</span><span class="cs">${T.cost ? UI.money(T.cost) : '무료'}</span><span class="hp">HP ${T.hp}</span><div class="cdmask"></div>`;
+      b.innerHTML = `<kbd>${i + 1}</kbd><span class="ic">${T.icon}</span><span class="nm">${T.name}</span><span class="cs">${T.cost ? UI.money(T.cost) : tr('무료', 'Free')}</span><span class="hp">HP ${T.hp}</span><div class="cdmask"></div>`;
       b.onclick = () => this.cmd({ c: 'buy', t });
       bb.appendChild(b);
     });
@@ -168,7 +169,7 @@ const App = {
       this.pre.peer = m;
       Flags.draw($('opp-flag'), m.flag);
       $('opp-name').textContent = `${m.nation} (Lv.${m.level})`;
-      $('opp-status').textContent = '✅ 국기 업로드 완료 · 준비됨';
+      $('opp-status').textContent = tr('✅ 국기 업로드 완료 · 준비됨', '✅ Flag uploaded · Ready');
       this.tryStartMP();
     });
     Net.on('start', () => { if (this.pre && this.pre.mode === 'guest' && this.pre.ready) this.startMatch(); });
@@ -189,11 +190,11 @@ const App = {
         if (!M.ended) {
           M.ended = true;
           this.exitPossess();
-          UI.announce('상대가 도망쳤습니다! 승리!', '#f6c343', 2500);
-          setTimeout(() => this.finishMatch(true, '상대가 게임을 떠났습니다'), 2500);
+          UI.announce(tr('상대가 도망쳤습니다! 승리!', 'Opponent fled! Victory!'), '#f6c343', 2500);
+          setTimeout(() => this.finishMatch(true, tr('상대가 게임을 떠났습니다', 'Opponent left the game')), 2500);
         }
       } else if (this.pre && (this.pre.mode === 'host' || this.pre.mode === 'guest')) {
-        UI.toast('상대가 나갔습니다', 2500);
+        UI.toast(tr('상대가 나갔습니다', 'Opponent left'), 2500);
         this.pre = null;
         this.showMenu();
       }
@@ -203,8 +204,8 @@ const App = {
       this.updateOnline();
       if (M && !M.ended && (M.mode === 'host' || M.mode === 'guest')) {
         M.ended = true;
-        UI.toast('서버 연결이 끊겼습니다', 3000);
-        this.finishMatch(false, '서버 연결 끊김');
+        UI.toast(tr('서버 연결이 끊겼습니다', 'Disconnected from server'), 3000);
+        this.finishMatch(false, tr('서버 연결 끊김', 'Server disconnected'));
       }
     });
   },
@@ -212,11 +213,11 @@ const App = {
   updateOnline() {
     $('menu-online').textContent = Net.connected
       ? (Net.mode === 'room'
-        ? `🟢 실시간 연결됨 · 지금 이 게임을 연 사람 ${Net.online || 1}명 · 친구와 동시에 매칭을 누르세요`
-        : `🟢 서버 연결됨 · 현재 접속자 ${Net.online || 1}명`)
+        ? tr(`🟢 실시간 연결됨 · 지금 이 게임을 연 사람 ${Net.online || 1}명 · 친구와 동시에 매칭을 누르세요`, `🟢 Live · ${Net.online || 1} here now · Press Find Match at the same time as a friend`)
+        : tr(`🟢 서버 연결됨 · 현재 접속자 ${Net.online || 1}명`, `🟢 Server connected · ${Net.online || 1} online`))
       : window.NW_OFFLINE
-        ? '⚪ 실시간 연결 대기 중 · 멀티플레이는 claude.ai에 로그인하고 이 게임에 초대받은 사람끼리 가능'
-        : '⚪ 오프라인 모드 (학습형 AI 대전) · 멀티플레이는 server.js 실행 후 접속';
+        ? tr('⚪ 실시간 연결 대기 중 · 멀티플레이는 claude.ai에 로그인하고 이 게임에 초대받은 사람끼리 가능', '⚪ Waiting for live connection · Multiplayer needs a claude.ai login and an invite to this game')
+        : tr('⚪ 오프라인 모드 (학습형 AI 대전) · 멀티플레이는 server.js 실행 후 접속', '⚪ Offline mode (vs learning AI) · Run server.js for multiplayer');
   },
 
   // ---------- 메뉴 화면들 ----------
@@ -229,9 +230,9 @@ const App = {
     $('menu-wins').textContent = P.wins;
     $('menu-losses').textContent = P.losses;
     $('menu-streak').textContent = P.streak;
-    $('menu-ai').textContent = Profile.isNewbie() ? '튜토' : Profile.aiDifficulty();
+    $('menu-ai').textContent = Profile.isNewbie() ? tr('튜토', 'Tut') : Profile.aiDifficulty();
     $('menu-flag').src = P.flag;
-    $('btn-match').textContent = Profile.isNewbie() ? '⚔️ 매칭 시작 (튜토리얼)' : '⚔️ 매칭 시작';
+    $('btn-match').textContent = Profile.isNewbie() ? tr('⚔️ 매칭 시작 (튜토리얼)', '⚔️ Find Match (Tutorial)') : tr('⚔️ 매칭 시작', '⚔️ Find Match');
     this.updateOnline();
     UI.show('screen-menu');
     if (!this.demo && !this.match) this.startDemo();
@@ -248,12 +249,12 @@ const App = {
       d.className = 'shop-item';
       d.innerHTML = `<div class="ic">${U.icon}</div><b>${U.name}</b><div class="lv">Lv.${lv} / ${U.max}</div><div class="note">${U.desc}</div>`;
       const b = document.createElement('button');
-      b.textContent = lv >= U.max ? '최대 레벨' : `구매 ${UI.money(cost)}`;
+      b.textContent = lv >= U.max ? tr('최대 레벨', 'Max Level') : tr(`구매 ${UI.money(cost)}`, `Buy ${UI.money(cost)}`);
       b.disabled = lv >= U.max || P.money < cost;
       b.onclick = () => {
         if (P.money < cost || lv >= U.max) return;
         P.money -= cost; P.upg[k]++; Profile.save();
-        UI.toast(`${U.name} Lv.${P.upg[k]} 달성!`);
+        UI.toast(tr(`${U.name} Lv.${P.upg[k]} 달성!`, `${U.name} is now Lv.${P.upg[k]}!`));
         this.showShop();
       };
       d.appendChild(b);
@@ -269,7 +270,7 @@ const App = {
       const T = UNIT_TYPES[t];
       const d = document.createElement('div');
       d.className = 'unit-card';
-      d.innerHTML = `<div class="ic">${T.icon}</div><b>${T.name}</b><div class="st">가격: ${t === 'commander' ? '기본 지급' : T.cost ? UI.money(T.cost) : '무료'}<br>체력: ${T.hp}<br>사거리: ${T.range} · 공격력: ${T.dmg}<br>${T.desc}</div>`;
+      d.innerHTML = `<div class="ic">${T.icon}</div><b>${T.name}</b><div class="st">${tr('가격', 'Cost')}: ${t === 'commander' ? tr('기본 지급', 'Starting unit') : T.cost ? UI.money(T.cost) : tr('무료', 'Free')}<br>${tr('체력', 'HP')}: ${T.hp}<br>${tr('사거리', 'Range')}: ${T.range} · ${tr('공격력', 'Damage')}: ${T.dmg}<br>${T.desc}</div>`;
       tb.appendChild(d);
     }
     UI.show('screen-units');
@@ -278,15 +279,15 @@ const App = {
   // ---------- 매칭 ----------
   async startMatching() {
     UI.show('screen-matching');
-    $('match-status').textContent = '상대를 찾는 중...';
-    $('match-sub').textContent = '서버에 연결하는 중...';
+    $('match-status').textContent = tr('상대를 찾는 중...', 'Finding opponent...');
+    $('match-sub').textContent = tr('서버에 연결하는 중...', 'Connecting to server...');
     this.stopMatching(false);
     const token = this.matchToken = {};
     const ok = await Net.connect();
     if (token !== this.matchToken) return;
     if (!ok) {
-      $('match-status').textContent = '온라인 상대가 없습니다';
-      $('match-sub').textContent = '패턴을 학습하는 AI와 대전합니다...';
+      $('match-status').textContent = tr('온라인 상대가 없습니다', 'No online opponents');
+      $('match-sub').textContent = tr('패턴을 학습하는 AI와 대전합니다...', 'Playing the learning AI instead...');
       this.matchTimeout = setTimeout(() => this.prepareAI(false), 1500);
       return;
     }
@@ -294,14 +295,14 @@ const App = {
       if (token !== this.matchToken) return;
       this.stopMatching(false);
       this.matchToken = null;
-      $('match-status').textContent = '매칭 성공!';
+      $('match-status').textContent = tr('매칭 성공!', 'Match found!');
       this.prepareMP(m);
     });
     Net.send({ type: 'queue', name: Profile.data.name, level: Profile.level() });
     let left = Net.mode === 'room' ? 30 : 15;
     const upd = () => {
-      $('match-sub').textContent = (Net.mode === 'room' ? `이 게임을 연 사람 ${Net.online}명 · 친구도 매칭 시작을 누르면 연결됩니다 · ` : `접속자 ${Net.online}명 · `) +
-        `${left}초 안에 상대가 없으면 학습형 AI(난이도 ${Profile.aiDifficulty()})와 대전합니다`;
+      $('match-sub').textContent = (Net.mode === 'room' ? tr(`이 게임을 연 사람 ${Net.online}명 · 친구도 매칭 시작을 누르면 연결됩니다 · `, `${Net.online} here now · A friend who presses Find Match will connect · `) : tr(`접속자 ${Net.online}명 · `, `${Net.online} online · `)) +
+        tr(`${left}초 안에 상대가 없으면 학습형 AI(난이도 ${Profile.aiDifficulty()})와 대전합니다`, `No opponent in ${left}s → you play the learning AI (Level ${Profile.aiDifficulty()})`);
     };
     upd();
     if (!this.matchToken) return; // 이미 매칭됨
@@ -309,8 +310,8 @@ const App = {
       left--; upd();
       if (left <= 0) {
         this.stopMatching(true);
-        $('match-status').textContent = '상대가 없습니다!';
-        $('match-sub').textContent = '학습형 AI와 매칭되었습니다';
+        $('match-status').textContent = tr('상대가 없습니다!', 'No opponent found!');
+        $('match-sub').textContent = tr('학습형 AI와 매칭되었습니다', 'Matched with the learning AI');
         this.matchTimeout = setTimeout(() => this.prepareAI(false), 1000);
       }
     }, 1000);
@@ -328,7 +329,7 @@ const App = {
     const plan = new AIController(null, 1, diff, model).plan;
     this.pre = {
       mode: tutorial ? 'tutorial' : 'ai', mySide: 0, diff, model, plan,
-      oppNation: tutorial ? '훈련 교관단' : AI_NATIONS[Math.floor(Math.random() * AI_NATIONS.length)],
+      oppNation: tutorial ? tr('훈련 교관단', 'Training Corps') : AI_NATIONS[Math.floor(Math.random() * AI_NATIONS.length)],
       oppFlag: Flags.random(), myFlag: Profile.data.flag, ready: false, peer: null,
     };
     this.showFlagScreen();
@@ -341,24 +342,24 @@ const App = {
   showFlagScreen() {
     const p = this.pre, P = Profile.data;
     const isAI = p.mode === 'ai' || p.mode === 'tutorial';
-    $('flag-title').textContent = p.mode === 'tutorial' ? '📘 튜토리얼 — 국기를 업로드하세요' : '매칭 완료! 국기를 업로드하세요';
-    $('inp-nation').value = P.nation || (P.name + ' 공화국');
+    $('flag-title').textContent = p.mode === 'tutorial' ? tr('📘 튜토리얼 — 국기를 업로드하세요', '📘 Tutorial — Upload Your Flag') : tr('매칭 완료! 국기를 업로드하세요', 'Match found! Upload Your Flag');
+    $('inp-nation').value = P.nation || (P.name + tr(' 공화국', ' Republic'));
     $('flag-wallet').textContent = UI.money(P.money);
     Flags.draw($('flag-preview'), p.myFlag);
     $('btn-ready').disabled = false;
-    $('btn-ready').textContent = '⚔️ 전투 준비 완료';
+    $('btn-ready').textContent = tr('⚔️ 전투 준비 완료', '⚔️ Ready for Battle');
     if (isAI) {
-      $('opp-label').textContent = p.mode === 'tutorial' ? '🤖 쉬운 AI' : `🤖 학습형 AI · 난이도 ${p.diff}`;
+      $('opp-label').textContent = p.mode === 'tutorial' ? tr('🤖 쉬운 AI', '🤖 Easy AI') : tr(`🤖 학습형 AI · 난이도 ${p.diff}`, `🤖 Learning AI · Level ${p.diff}`);
       $('opp-name').textContent = p.oppNation;
-      $('opp-status').textContent = '준비 완료';
+      $('opp-status').textContent = tr('준비 완료', 'Ready');
       Flags.draw($('opp-flag'), p.oppFlag);
       const a = $('ai-analysis');
       a.classList.remove('hidden');
-      a.innerHTML = '<b>🧠 AI 전략 분석</b><br>' + p.plan.notes.map(n => '· ' + n).join('<br>');
+      a.innerHTML = tr('<b>🧠 AI 전략 분석</b><br>', '<b>🧠 AI Strategy Analysis</b><br>') + p.plan.notes.map(n => '· ' + n).join('<br>');
     } else {
       $('opp-label').textContent = `👤 ${p.opp.name}`;
       $('opp-name').textContent = `Lv.${p.opp.level}`;
-      $('opp-status').textContent = '⏳ 상대가 국기를 업로드하는 중...';
+      $('opp-status').textContent = tr('⏳ 상대가 국기를 업로드하는 중...', '⏳ Opponent is uploading a flag...');
       Flags.draw($('opp-flag'), null);
       $('ai-analysis').classList.add('hidden');
     }
@@ -368,14 +369,14 @@ const App = {
   onReady() {
     const p = this.pre;
     if (!p) return;
-    p.myNation = $('inp-nation').value.trim() || (Profile.data.name + ' 공화국');
+    p.myNation = $('inp-nation').value.trim() || (Profile.data.name + tr(' 공화국', ' Republic'));
     Profile.data.flag = p.myFlag;
     Profile.data.nation = p.myNation;
     Profile.save();
     if (p.mode === 'ai' || p.mode === 'tutorial') { this.startMatch(); return; }
     p.ready = true;
     $('btn-ready').disabled = true;
-    $('btn-ready').textContent = '⏳ 상대를 기다리는 중...';
+    $('btn-ready').textContent = tr('⏳ 상대를 기다리는 중...', '⏳ Waiting for opponent...');
     Net.send({ type: 'flag', flag: p.myFlag, nation: p.myNation, money: Profile.data.money, upg: Profile.data.upg, level: Profile.level() });
     this.tryStartMP();
   },
@@ -430,7 +431,7 @@ const App = {
     $('hud-flag-1').src = flags[other];
     $('team-0').style.borderLeftColor = SIDE_CSS[me];
     $('team-1').style.borderRightColor = SIDE_CSS[other];
-    $('hud-ai').textContent = p.mode === 'ai' ? `🤖 학습형 AI Lv.${m.diff}` : p.mode === 'tutorial' ? '📘 튜토리얼' : '👥 멀티플레이';
+    $('hud-ai').textContent = p.mode === 'ai' ? tr(`🤖 학습형 AI Lv.${m.diff}`, `🤖 Learning AI Lv.${m.diff}`) : p.mode === 'tutorial' ? tr('📘 튜토리얼', '📘 Tutorial') : tr('👥 멀티플레이', '👥 Multiplayer');
     $('killfeed').innerHTML = '';
     $('selinfo').classList.add('hidden');
     UI.hideAll();
@@ -438,8 +439,8 @@ const App = {
     this.setPossessUI(false);
     if (p.mode === 'tutorial') { m.tut = { i: 0 }; this.renderTut(); $('tutorial').classList.remove('hidden'); }
     else $('tutorial').classList.add('hidden');
-    UI.announce('전투 시작!', '#f6c343', 1800);
-    UI.toast(`우리 편: ${me === 0 ? '파랑' : '빨강'} · 상대 사령관 ⭐을 처치하세요!`, 3000);
+    UI.announce(tr('전투 시작!', 'Battle start!'), '#f6c343', 1800);
+    UI.toast(tr(`우리 편: ${me === 0 ? '파랑' : '빨강'} · 상대 사령관 ⭐을 처치하세요!`, `Your side: ${me === 0 ? 'Blue' : 'Red'} · Defeat the enemy Commander ⭐!`), 3000);
   },
 
   // ---------- 상태 조회 (호스트/AI: sim, 게스트: 스냅샷) ----------
@@ -468,13 +469,13 @@ const App = {
     const S = this.sideInfo(m.mySide);
     if (c.c === 'buy') {
       const T = UNIT_TYPES[c.t];
-      if (this.myArmy() >= GAME.UNIT_CAP) { UI.toast(`병력 한도(${GAME.UNIT_CAP}) 초과!`); return false; }
-      if (c.t === 'infantry' && S.infCd > 0) { UI.toast(`보병 징집 대기 중 (${S.infCd.toFixed(1)}초)`); return false; }
-      if (T.cost > S.money) { UI.toast(`돈이 부족합니다! (${UI.money(T.cost)} 필요)`); return false; }
+      if (this.myArmy() >= GAME.UNIT_CAP) { UI.toast(tr(`병력 한도(${GAME.UNIT_CAP}) 초과!`, `Army limit (${GAME.UNIT_CAP}) reached!`)); return false; }
+      if (c.t === 'infantry' && S.infCd > 0) { UI.toast(tr(`보병 징집 대기 중 (${S.infCd.toFixed(1)}초)`, `Infantry ready in ${S.infCd.toFixed(1)}s`)); return false; }
+      if (T.cost > S.money) { UI.toast(tr(`돈이 부족합니다! (${UI.money(T.cost)} 필요)`, `Not enough money! (Need ${UI.money(T.cost)})`)); return false; }
     }
     if (c.c === 'factory') {
-      if (S.factories >= GAME.FACTORY_MAX) { UI.toast('공장을 더 지을 수 없습니다'); return false; }
-      if (factoryCost(S.factories) > S.money) { UI.toast(`돈이 부족합니다! (${UI.money(factoryCost(S.factories))} 필요)`); return false; }
+      if (S.factories >= GAME.FACTORY_MAX) { UI.toast(tr('공장을 더 지을 수 없습니다', 'Factory limit reached')); return false; }
+      if (factoryCost(S.factories) > S.money) { UI.toast(tr(`돈이 부족합니다! (${UI.money(factoryCost(S.factories))} 필요)`, `Not enough money! (Need ${UI.money(factoryCost(S.factories))})`)); return false; }
     }
     if (m.sim) {
       if (m.sim.command(m.mySide, c) !== 'ok') return false;
@@ -483,11 +484,11 @@ const App = {
     }
     const st = m.myStats;
     if (c.c === 'buy') st.buy[c.t] = (st.buy[c.t] || 0) + 1;
-    if (c.c === 'factory') { st.factories++; UI.toast('🏭 공장 건설! 수입 증가'); }
+    if (c.c === 'factory') { st.factories++; UI.toast(tr('🏭 공장 건설! 수입 증가', '🏭 Factory built! Income up')); }
     if (c.c === 'stance') {
       if (c.v === 'attack' && st.firstAttack < 0) st.firstAttack = Math.round(m.sim ? m.sim.t : (m.view ? m.view.t : 0));
       if (m.view) m.view.sides[m.mySide].stance = c.v;
-      UI.toast(c.v === 'attack' ? '⚔️ 전군 공격!' : '🛡️ 방어 태세');
+      UI.toast(c.v === 'attack' ? tr('⚔️ 전군 공격!', '⚔️ All units attack!') : tr('🛡️ 방어 태세', '🛡️ Defensive stance'));
     }
     if (c.c === 'possess') st.possess++;
     return true;
@@ -509,10 +510,10 @@ const App = {
       }
     }
     if (u) { this.possess(u.id); return; }
-    if (this.cmd({ c: 'buy', t: 'infantry' })) { m.possessNext = true; UI.toast('보병을 징집해 직접 참전합니다!'); }
+    if (this.cmd({ c: 'buy', t: 'infantry' })) { m.possessNext = true; UI.toast(tr('보병을 징집해 직접 참전합니다!', 'Drafting infantry to join the fight!')); }
     else {
       const c = this.viewUnits().find(x => x.alive && x.side === me && x.type === 'commander');
-      if (c) { this.possess(c.id); UI.toast('⭐ 사령관으로 직접 참전! 죽으면 패배이니 조심하세요'); }
+      if (c) { this.possess(c.id); UI.toast(tr('⭐ 사령관으로 직접 참전! 죽으면 패배이니 조심하세요', '⭐ Fighting as the Commander! Careful, if you die you lose')); }
     }
   },
   possess(id) {
@@ -525,7 +526,7 @@ const App = {
     this.r.camMode = 'fps'; this.r.followId = id;
     this.setPossessUI(true);
     this.lockPointer();
-    UI.announce(`${UNIT_TYPES[u.type].icon} ${UNIT_TYPES[u.type].name}(으)로 참전!`, '#4ade80', 1500);
+    UI.announce(tr(`${UNIT_TYPES[u.type].icon} ${UNIT_TYPES[u.type].name}(으)로 참전!`, `${UNIT_TYPES[u.type].icon} Fighting as ${UNIT_TYPES[u.type].name}!`), '#4ade80', 1500);
   },
   exitPossess(msg) {
     const m = this.match;
@@ -545,7 +546,7 @@ const App = {
     $('hero-panel').classList.toggle('hidden', !on);
     $('rts-hint').classList.toggle('hidden', on);
     $('btn-possess').classList.toggle('on', on);
-    $('btn-possess').querySelector('b').textContent = on ? '↩️ 지휘 모드' : '🎮 직접 참전';
+    $('btn-possess').querySelector('b').textContent = on ? tr('↩️ 지휘 모드', '↩️ Command Mode') : tr('🎮 직접 참전', '🎮 Join Fight');
     if (on) $('selinfo').classList.add('hidden');
   },
   lockPointer() {
@@ -627,7 +628,7 @@ const App = {
     const m = this.match;
     if (!m) return;
     const mp = m.mode === 'host' || m.mode === 'guest';
-    $('pause-title').textContent = mp ? '메뉴 (멀티플레이 중에는 멈추지 않습니다)' : '일시정지';
+    $('pause-title').textContent = mp ? tr('메뉴 (멀티플레이 중에는 멈추지 않습니다)', 'Menu (game keeps running in multiplayer)') : tr('일시정지', 'Paused');
     $('screen-pause').classList.toggle('hidden', !on);
     m.paused = on && !mp;
   },
@@ -640,7 +641,7 @@ const App = {
     const T = UNIT_TYPES[u.type];
     const mine = u.side === m.mySide;
     box.classList.remove('hidden');
-    $('sel-text').innerHTML = `<b style="color:${SIDE_CSS[u.side]}">${T.icon} ${T.name}</b> ${mine ? '(아군)' : '(적군)'}<br>체력 ${Math.ceil(u.hp)} / ${Math.round(u.maxHp)}<br><span class="note">${T.desc}</span>`;
+    $('sel-text').innerHTML = `<b style="color:${SIDE_CSS[u.side]}">${T.icon} ${T.name}</b> ${mine ? tr('(아군)', '(ally)') : tr('(적군)', '(enemy)')}<br>${tr('체력', 'HP')} ${Math.ceil(u.hp)} / ${Math.round(u.maxHp)}<br><span class="note">${T.desc}</span>`;
     const b = $('btn-sel-possess');
     b.classList.toggle('hidden', !mine);
     b.onclick = () => this.possess(u.id);
@@ -654,7 +655,7 @@ const App = {
     if (e.k === 'die') {
       const A = UNIT_TYPES[e.by] || UNIT_TYPES.infantry, D = UNIT_TYPES[e.t];
       UI.killfeed(`<span style="color:${SIDE_CSS[e.ks]}">${m.names[e.ks]}</span> ${A.icon} ▶ <span style="color:${SIDE_CSS[e.side]}">${D.icon} ${D.name}</span>`);
-      if (e.id === m.possessId) this.exitPossess('💀 전사했습니다! 지휘 모드로 복귀');
+      if (e.id === m.possessId) this.exitPossess(tr('💀 전사했습니다! 지휘 모드로 복귀', '💀 You were killed! Back to command mode'));
       if (e.t === 'commander') m.deathPos = { x: e.x, z: e.z };
     }
     if (e.k === 'spawn' && m.possessNext && e.side === m.mySide && e.t === 'infantry') {
@@ -670,7 +671,7 @@ const App = {
     m.ended = true;
     this.exitPossess();
     const win = w === m.mySide;
-    UI.announce(win ? '🏆 적 사령관 처치! 승리!' : '💀 사령관 전사... 패배', win ? '#f6c343' : '#f87171', 3200);
+    UI.announce(win ? tr('🏆 적 사령관 처치! 승리!', '🏆 Enemy Commander down! Victory!') : tr('💀 사령관 전사... 패배', '💀 Commander lost... Defeat'), win ? '#f6c343' : '#f87171', 3200);
     if (m.deathPos) Object.assign(this.r.cam, { x: m.deathPos.x, z: m.deathPos.z + (m.mySide === 0 ? 18 : -18), dist: 40 });
     setTimeout(() => this.finishMatch(win), 3200);
   },
@@ -703,22 +704,22 @@ const App = {
 
     const dur = m.sim ? m.sim.t : (m.view ? m.view.t : 0);
     const newLevel = Profile.level(), newDiff = Profile.aiDifficulty();
-    $('result-title').textContent = win ? '🏆 승리!' : '패배...';
+    $('result-title').textContent = win ? tr('🏆 승리!', '🏆 Victory!') : tr('패배...', 'Defeat...');
     $('result-title').className = 'result-title ' + (win ? 'win' : 'lose');
-    $('result-sub').textContent = reason || (m.mode === 'tutorial' ? '튜토리얼 완료! 이제 실전 매칭이 가능합니다.' : win ? `${m.names[1 - m.mySide]}을(를) 정복했습니다!` : `${m.names[1 - m.mySide]}에게 패배했습니다.`);
+    $('result-sub').textContent = reason || (m.mode === 'tutorial' ? tr('튜토리얼 완료! 이제 실전 매칭이 가능합니다.', 'Tutorial complete! Real matches are now unlocked.') : win ? tr(`${m.names[1 - m.mySide]}을(를) 정복했습니다!`, `You conquered ${m.names[1 - m.mySide]}!`) : tr(`${m.names[1 - m.mySide]}에게 패배했습니다.`, `Defeated by ${m.names[1 - m.mySide]}.`));
     const rows = [
-      ['전투 시간', UI.time(dur)],
-      ['처치 / 손실', `${kills} / ${my.lost || 0}`],
-      ['처치 보상', UI.money(kills * GAME.KILL_REWARD)],
-      ['승리 보상', win ? '+' + UI.money(GAME.WIN_REWARD) : '-'],
-      ['남은 전투 자금', UI.money(battleMoney)],
-      ['지갑', `${UI.money(m.startMoney)} → <b>${UI.money(P.money)}</b>`],
-      ['경험치', `+${xp} XP` + (newLevel > prevLevel ? ` · <b>레벨 업! Lv.${newLevel}</b>` : ` · Lv.${newLevel}`)],
-      ['연승', `${P.streak}연승 (최고 ${P.bestStreak})`],
-      ['다음 AI 난이도', `${newDiff}` + (newDiff > prevDiff ? ' <b>▲ 상승</b>' : newDiff < prevDiff ? ' ▼' : '')],
+      [tr('전투 시간', 'Battle time'), UI.time(dur)],
+      [tr('처치 / 손실', 'Kills / Losses'), `${kills} / ${my.lost || 0}`],
+      [tr('처치 보상', 'Kill reward'), UI.money(kills * GAME.KILL_REWARD)],
+      [tr('승리 보상', 'Win reward'), win ? '+' + UI.money(GAME.WIN_REWARD) : '-'],
+      [tr('남은 전투 자금', 'Funds left'), UI.money(battleMoney)],
+      [tr('지갑', 'Wallet'), `${UI.money(m.startMoney)} → <b>${UI.money(P.money)}</b>`],
+      [tr('경험치', 'XP'), `+${xp} XP` + (newLevel > prevLevel ? tr(` · <b>레벨 업! Lv.${newLevel}</b>`, ` · <b>Level up! Lv.${newLevel}</b>`) : ` · Lv.${newLevel}`)],
+      [tr('연승', 'Streak'), tr(`${P.streak}연승 (최고 ${P.bestStreak})`, `${P.streak} wins (best ${P.bestStreak})`)],
+      [tr('다음 AI 난이도', 'Next AI level'), `${newDiff}` + (newDiff > prevDiff ? tr(' <b>▲ 상승</b>', ' <b>▲ Up</b>') : newDiff < prevDiff ? ' ▼' : '')],
     ];
     $('result-list').innerHTML = rows.map(([a, b]) => `<div><span>${a}</span><span>${b}</span></div>`).join('') +
-      (m.mode !== 'tutorial' ? '<p class="note">🧠 AI가 이번 경기에서 당신의 전략(병과 선택, 공격 타이밍, 경제 운영)을 학습했습니다.</p>' : '');
+      (m.mode !== 'tutorial' ? tr('<p class="note">🧠 AI가 이번 경기에서 당신의 전략(병과 선택, 공격 타이밍, 경제 운영)을 학습했습니다.</p>', '<p class="note">🧠 The AI learned your strategy this match (unit picks, attack timing, economy).</p>') : '');
 
     this.match = null;
     this.r.clearMatch();
@@ -738,7 +739,7 @@ const App = {
     $('tut-text').innerHTML = s.text;
     $('tut-text').classList.remove('done');
     $('tut-next').classList.toggle('hidden', !s.next);
-    $('tut-next').textContent = m.tut.i === TUT_STEPS.length - 1 ? '확인 ✔' : '다음 ▶';
+    $('tut-next').textContent = m.tut.i === TUT_STEPS.length - 1 ? tr('확인 ✔', 'OK ✔') : tr('다음 ▶', 'Next ▶');
   },
   tutAdvance() {
     const m = this.match;
@@ -753,7 +754,7 @@ const App = {
     const s = TUT_STEPS[m.tut.i];
     if (s.check && s.check(m)) {
       m.tut.wait = true;
-      $('tut-text').innerHTML = '✅ 완료!';
+      $('tut-text').innerHTML = tr('✅ 완료!', '✅ Done!');
       $('tut-text').classList.add('done');
       setTimeout(() => { if (m.tut) { m.tut.wait = false; this.tutAdvance(); } }, 900);
     }
@@ -765,11 +766,11 @@ const App = {
     const me = m.mySide, other = 1 - me;
     const S = this.sideInfo(me), O = this.sideInfo(other);
     $('hud-money').textContent = UI.money(S.money);
-    $('hud-income').textContent = `+$${(S.inc || 0).toFixed(1)}/초 · 공장 ${S.factories}/${GAME.FACTORY_MAX}`;
+    $('hud-income').textContent = tr(`+$${(S.inc || 0).toFixed(1)}/초 · 공장 ${S.factories}/${GAME.FACTORY_MAX}`, `+$${(S.inc || 0).toFixed(1)}/s · Factories ${S.factories}/${GAME.FACTORY_MAX}`);
     const army = this.myArmy();
-    $('hud-army').textContent = `병력 ${army} / ${GAME.UNIT_CAP}`;
+    $('hud-army').textContent = tr(`병력 ${army} / ${GAME.UNIT_CAP}`, `Army ${army} / ${GAME.UNIT_CAP}`);
     $('hud-time').textContent = UI.time(m.sim ? m.sim.t : (m.view ? m.view.t : 0));
-    $('hud-score').textContent = `처치 ${S.kills} : ${O.kills}`;
+    $('hud-score').textContent = tr(`처치 ${S.kills} : ${O.kills}`, `Kills ${S.kills} : ${O.kills}`);
     for (const t of BUY_ORDER) {
       const b = $('buy-' + t), T = UNIT_TYPES[t];
       b.classList.toggle('poor', T.cost > S.money || army >= GAME.UNIT_CAP);
@@ -792,7 +793,7 @@ const App = {
       const u = this.findUnit(m.possessId);
       if (u) {
         const T = UNIT_TYPES[u.type];
-        $('hero-name').textContent = `${T.icon} ${T.name} — 직접 조종 중 (피해 +${Math.round((GAME.HERO_BONUS - 1) * 100)}%)`;
+        $('hero-name').textContent = tr(`${T.icon} ${T.name} — 직접 조종 중 (피해 +${Math.round((GAME.HERO_BONUS - 1) * 100)}%)`, `${T.icon} ${T.name} — Under your control (dmg +${Math.round((GAME.HERO_BONUS - 1) * 100)}%)`);
         $('hero-hp').style.width = Math.round(u.hp / u.maxHp * 100) + '%';
         $('hero-reload').style.width = (u.cd !== undefined ? Math.round((1 - Math.max(0, u.cd) / (T.rate * 0.8)) * 100) : 100) + '%';
       }
@@ -859,7 +860,7 @@ const App = {
     let input = null;
     if (m.possessId) {
       const u = this.findUnit(m.possessId);
-      if (!u) { m.lostT += dt; if (m.lostT > 1.2) this.exitPossess('💀 전사했습니다! 지휘 모드로 복귀'); }
+      if (!u) { m.lostT += dt; if (m.lostT > 1.2) this.exitPossess(tr('💀 전사했습니다! 지휘 모드로 복귀', '💀 You were killed! Back to command mode')); }
       else m.lostT = 0;
       const k = this.keys;
       let fwd = (k.KeyW || k.ArrowUp ? 1 : 0) - (k.KeyS || k.ArrowDown ? 1 : 0);

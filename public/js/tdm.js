@@ -11,12 +11,12 @@ const TDM = {
   HILL: { x: 0, z: 0, r: 9, h: 0.35, cap: 5, bonus: 10 },
   WPN: ['rifle', 'smg', 'shotgun', 'sniper', 'lmg', 'rpg'],
   WEAPONS: {
-    rifle:   { name: '돌격소총',  icon: '🔫', dmg: 24, rate: 0.13, range: 60,  spread: 0.025, mag: 30, reload: 2.0, auto: true,  speed: 1.0,  cls: 'mid',   fx: 'infantry', desc: '만능 자동소총' },
-    smg:     { name: '기관단총',  icon: '💨', dmg: 16, rate: 0.075, range: 32, spread: 0.05, mag: 35, reload: 1.6, auto: true,  speed: 1.15, cls: 'close', fx: 'infantry', desc: '빠른 연사, 근접전' },
-    shotgun: { name: '산탄총',    icon: '💥', dmg: 13, rate: 0.85, range: 18,  spread: 0.11, mag: 6,  reload: 2.4, pellets: 8, speed: 1.05, cls: 'close', fx: 'infantry', desc: '근거리 일격' },
-    sniper:  { name: '저격소총',  icon: '🎯', dmg: 90, rate: 1.3,  range: 130, spread: 0.002, mag: 5, reload: 2.8, zoom: 3.2, speed: 0.9, cls: 'long', fx: 'sniper', head: 2.5, desc: '헤드샷 즉사, 원거리' },
-    lmg:     { name: '경기관총',  icon: '🔥', dmg: 19, rate: 0.095, range: 65, spread: 0.04, mag: 80, reload: 4.2, auto: true,  speed: 0.85, cls: 'mid',   fx: 'apc', desc: '대용량 탄창, 제압' },
-    rpg:     { name: '로켓발사기', icon: '🚀', dmg: 120, rate: 1.4, range: 85, spread: 0.01, mag: 1, reload: 2.8, splash: 5.5, speed: 0.9, cls: 'long', fx: 'tank', desc: '범위 폭발' },
+    rifle:   { name: tr('돌격소총', 'Assault Rifle'),  icon: '🔫', dmg: 24, rate: 0.13, range: 60,  spread: 0.025, mag: 30, reload: 2.0, auto: true,  speed: 1.0,  cls: 'mid',   fx: 'infantry', desc: tr('만능 자동소총', 'All-round auto rifle') },
+    smg:     { name: tr('기관단총', 'SMG'),  icon: '💨', dmg: 16, rate: 0.075, range: 32, spread: 0.05, mag: 35, reload: 1.6, auto: true,  speed: 1.15, cls: 'close', fx: 'infantry', desc: tr('빠른 연사, 근접전', 'Fast fire, close range') },
+    shotgun: { name: tr('산탄총', 'Shotgun'),    icon: '💥', dmg: 13, rate: 0.85, range: 18,  spread: 0.11, mag: 6,  reload: 2.4, pellets: 8, speed: 1.05, cls: 'close', fx: 'infantry', desc: tr('근거리 일격', 'Close-range blast') },
+    sniper:  { name: tr('저격소총', 'Sniper Rifle'),  icon: '🎯', dmg: 90, rate: 1.3,  range: 130, spread: 0.002, mag: 5, reload: 2.8, zoom: 3.2, speed: 0.9, cls: 'long', fx: 'sniper', head: 2.5, desc: tr('헤드샷 즉사, 원거리', 'Headshots kill, long range') },
+    lmg:     { name: tr('경기관총', 'LMG'),  icon: '🔥', dmg: 19, rate: 0.095, range: 65, spread: 0.04, mag: 80, reload: 4.2, auto: true,  speed: 0.85, cls: 'mid',   fx: 'apc', desc: tr('대용량 탄창, 제압', 'Big mag, suppression') },
+    rpg:     { name: tr('로켓발사기', 'Rocket Launcher'), icon: '🚀', dmg: 120, rate: 1.4, range: 85, spread: 0.01, mag: 1, reload: 2.8, splash: 5.5, speed: 0.9, cls: 'long', fx: 'tank', desc: tr('범위 폭발', 'Splash explosion') },
   },
   // 엄폐물 [x, z, 폭, 깊이, 높이]  (z 대칭으로 복제됨)
   MAP_HALF: [
@@ -35,8 +35,10 @@ TDM.BOXES = (() => {
   for (const b of TDM.MAP_MID) add(b[0], b[1], b[2], b[3], b[4]);
   return out;
 })();
-const BOT_NAMES = ['독수리', '번개', '호랑이', '늑대', '매', '곰', '여우', '표범', '상어', '코브라', '바람', '천둥', '유령', '불꽃', '강철', '그림자', '사자', '황소', '전갈', '돌풍', '레이븐', '팔콘', '바이퍼', '카이저', '블레이드',
-  '해일', '폭풍', '용', '들소', '재규어', '맹금', '화산', '빙하', '철벽', '탱고', '알파', '브라보', '델타', '에코', '폭스', '고스트', '스톰', '타이탄', '퓨마', '하운드', '불사조', '검독수리', '흑표', '백곰', '은빛여우'];
+const BOT_NAMES = tr(['독수리', '번개', '호랑이', '늑대', '매', '곰', '여우', '표범', '상어', '코브라', '바람', '천둥', '유령', '불꽃', '강철', '그림자', '사자', '황소', '전갈', '돌풍', '레이븐', '팔콘', '바이퍼', '카이저', '블레이드',
+  '해일', '폭풍', '용', '들소', '재규어', '맹금', '화산', '빙하', '철벽', '탱고', '알파', '브라보', '델타', '에코', '폭스', '고스트', '스톰', '타이탄', '퓨마', '하운드', '불사조', '검독수리', '흑표', '백곰', '은빛여우'], [
+  'Eagle', 'Bolt', 'Tiger', 'Wolf', 'Hawk', 'Bear', 'Fox', 'Leopard', 'Shark', 'Cobra', 'Wind', 'Thunder', 'Ghost', 'Blaze', 'Steel', 'Shadow', 'Lion', 'Bull', 'Scorpion', 'Gust', 'Raven', 'Falcon', 'Viper', 'Kaiser', 'Blade',
+  'Tsunami', 'Storm', 'Dragon', 'Bison', 'Jaguar', 'Raptor', 'Volcano', 'Glacier', 'Bulwark', 'Tango', 'Alpha', 'Bravo', 'Delta', 'Echo', 'Foxtrot', 'Specter', 'Tempest', 'Titan', 'Puma', 'Hound', 'Phoenix', 'Aquila', 'Panther', 'Polar', 'Silver Fox']);
 const botName = id => 'AI ' + BOT_NAMES[(id - 1) % BOT_NAMES.length];
 
 // ---------- 공용 물리 ----------
@@ -131,17 +133,17 @@ const TdmLearn = {
     return base;
   },
   analysisText(model, diff) {
-    if (!model) return ['학습 데이터 부족: 경기 중 실시간으로 패턴을 분석합니다.'];
+    if (!model) return [tr('학습 데이터 부족: 경기 중 실시간으로 패턴을 분석합니다.', 'Not enough data: learning player patterns live.')];
     const W = TDM.WEAPONS, out = [];
-    out.push(`플레이어들이 가장 많이 쓰는 무기: ${W[model.fav].icon} ${W[model.fav].name} (${Math.round(Math.max(...model.w) * 100)}%)`);
+    out.push(tr(`플레이어들이 가장 많이 쓰는 무기: ${W[model.fav].icon} ${W[model.fav].name} (${Math.round(Math.max(...model.w) * 100)}%)`, `Most used weapon: ${W[model.fav].icon} ${W[model.fav].name} (${Math.round(Math.max(...model.w) * 100)}%)`));
     const c = model.cls;
-    if (c.long > 0.35) out.push('원거리 선호 → AI는 기관단총·산탄총으로 측면 돌파');
-    else if (c.close > 0.4) out.push('근접전 선호 → AI는 소총·경기관총으로 거리 유지');
-    else out.push('중거리 선호 → AI는 저격·로켓으로 견제');
-    const lane = ['왼쪽', '중앙', '오른쪽'][model.l.indexOf(Math.max(...model.l))];
-    out.push(`자주 다니는 길: ${lane} → AI가 그 길을 집중 방어`);
-    if (model.h > 0.3) out.push('거점 점령을 좋아함 → 로켓 부대 배치');
-    out.push(`분석한 경기 수 ${model.n} · AI 난이도 ${diff}`);
+    if (c.long > 0.35) out.push(tr('원거리 선호 → AI는 기관단총·산탄총으로 측면 돌파', 'Players like long range → AI flanks with SMGs and shotguns'));
+    else if (c.close > 0.4) out.push(tr('근접전 선호 → AI는 소총·경기관총으로 거리 유지', 'Players like close range → AI keeps distance with rifles and LMGs'));
+    else out.push(tr('중거리 선호 → AI는 저격·로켓으로 견제', 'Players like mid range → AI harasses with snipers and rockets'));
+    const lane = tr(['왼쪽', '중앙', '오른쪽'], ['left', 'center', 'right'])[model.l.indexOf(Math.max(...model.l))];
+    out.push(tr(`자주 다니는 길: ${lane} → AI가 그 길을 집중 방어`, `Favorite lane: ${lane} → AI guards it heavily`));
+    if (model.h > 0.3) out.push(tr('거점 점령을 좋아함 → 로켓 부대 배치', 'Players love the hill → AI brings rockets'));
+    out.push(tr(`분석한 경기 수 ${model.n} · AI 난이도 ${diff}`, `Matches analyzed ${model.n} · AI level ${diff}`));
     return out;
   },
 };
@@ -209,8 +211,8 @@ class TdmSim {
     };
   }
   spawnPos(team) {
-    const z = team === 0 ? 86 : -86;
-    return { x: (Math.random() - 0.5) * 40, z: z + (Math.random() - 0.5) * 8 };
+    const z = team === 0 ? 80 : -80; // 기지 모래주머니 앞쪽
+    return { x: (Math.random() - 0.5) * 40, z: z + (Math.random() - 0.5) * 5 };
   }
   respawn(s) {
     const p = this.spawnPos(s.team);

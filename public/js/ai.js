@@ -22,23 +22,23 @@ class AIController {
     const m = this.model, d = this.diff;
     const learnW = d <= 0 ? 0 : Math.min(0.85, 0.15 + d * 0.07) * m.confidence;
     const plan = { learnW, notes: [], counter: null, earlyDefense: false, factories: 0 };
-    if (d <= 0) { plan.notes.push('튜토리얼 AI: 소극적으로 보병만 사용합니다.'); return plan; }
+    if (d <= 0) { plan.notes.push(tr('튜토리얼 AI: 소극적으로 보병만 사용합니다.', 'Tutorial AI: plays passively, infantry only.')); return plan; }
     // 선호 병과 → 대응 유닛
     const p = m.pref;
     if (m.confidence > 0.05) {
       const top = p.air >= p.armor && p.air >= p.inf ? 'air' : (p.armor >= p.inf ? 'armor' : 'inf');
       plan.counter = { air: 'apc', armor: 'heli', inf: 'tank' }[top];
-      const catName = { air: '공중', armor: '기갑', inf: '보병' }[top];
-      plan.notes.push(`상대는 ${catName} 병과를 선호 (${Math.round(p[top] * 100)}%) → ${UNIT_TYPES[plan.counter].name} 위주로 대응`);
-      if (m.favorite) plan.notes.push(`가장 자주 쓰는 유닛: ${UNIT_TYPES[m.favorite].name}`);
-      if (m.rushRate > 0.4) { plan.earlyDefense = true; plan.notes.push(`초반 러시 성향 (평균 ${Math.round(m.firstAttack)}초에 공격) → 초반 수비 강화`); }
-      else plan.notes.push(`평균 ${Math.round(m.firstAttack)}초에 첫 공격 → 그 전에 경제 확장`);
-      if (m.possessRate > 0.5) plan.notes.push('직접 참전을 즐겨함 → 사령관 호위 강화');
+      const catName = (LANG === 'ko' ? { air: '공중', armor: '기갑', inf: '보병' } : { air: 'air', armor: 'armor', inf: 'infantry' })[top];
+      plan.notes.push(tr(`상대는 ${catName} 병과를 선호 (${Math.round(p[top] * 100)}%) → ${UNIT_TYPES[plan.counter].name} 위주로 대응`, `You favor ${catName} (${Math.round(p[top] * 100)}%) → countering with ${UNIT_TYPES[plan.counter].name}`));
+      if (m.favorite) plan.notes.push(tr(`가장 자주 쓰는 유닛: ${UNIT_TYPES[m.favorite].name}`, `Your most used unit: ${UNIT_TYPES[m.favorite].name}`));
+      if (m.rushRate > 0.4) { plan.earlyDefense = true; plan.notes.push(tr(`초반 러시 성향 (평균 ${Math.round(m.firstAttack)}초에 공격) → 초반 수비 강화`, `You rush early (attack at ~${Math.round(m.firstAttack)}s) → stronger early defense`)); }
+      else plan.notes.push(tr(`평균 ${Math.round(m.firstAttack)}초에 첫 공격 → 그 전에 경제 확장`, `First attack at ~${Math.round(m.firstAttack)}s → build economy before then`));
+      if (m.possessRate > 0.5) plan.notes.push(tr('직접 참전을 즐겨함 → 사령관 호위 강화', 'You like to fight in person → guarding the commander'));
     } else {
-      plan.notes.push('학습 데이터 부족: 경기 중 실시간으로 패턴을 분석합니다.');
+      plan.notes.push(tr('학습 데이터 부족: 경기 중 실시간으로 패턴을 분석합니다.', 'Not enough data: learning your patterns live.'));
     }
     plan.factories = Math.min(GAME.FACTORY_MAX, Math.round(1 + d * 0.5 + (plan.earlyDefense ? -1 : 0.5)));
-    plan.notes.push(`학습 활용도 ${Math.round(learnW * 100)}% · 난이도 ${d}`);
+    plan.notes.push(tr(`학습 활용도 ${Math.round(learnW * 100)}% · 난이도 ${d}`, `Learning used ${Math.round(learnW * 100)}% · Level ${d}`));
     return plan;
   }
 

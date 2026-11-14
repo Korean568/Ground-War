@@ -27,7 +27,16 @@ const UI = {
     while (kf.children.length > 6) kf.lastChild.remove();
     setTimeout(() => d.remove(), 6000);
   },
-  money(n) { return '$' + Math.floor(n).toLocaleString('ko-KR'); },
+  money(n) { return '$' + Math.floor(n).toLocaleString(LANG === 'ko' ? 'ko-KR' : 'en-US'); },
+  // 영어 브라우저면 index.html의 data-en* 속성으로 텍스트 교체
+  applyLang() {
+    if (LANG !== 'en') return;
+    document.documentElement.lang = 'en';
+    document.querySelectorAll('[data-en-html]').forEach(e => { e.innerHTML = e.dataset.enHtml; });
+    document.querySelectorAll('[data-en]').forEach(e => { e.textContent = e.dataset.en; });
+    document.querySelectorAll('[data-en-ph]').forEach(e => { e.placeholder = e.dataset.enPh; });
+    document.querySelectorAll('[data-en-title]').forEach(e => { e.title = e.dataset.enTitle; });
+  },
   time(t) { const m = Math.floor(t / 60), s = Math.floor(t % 60); return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0'); },
 };
 

@@ -1,13 +1,16 @@
 // ===== 국가 전쟁: 게임 설정 =====
+// 언어: 한국어 브라우저 → 한국어, 그 외 → 영어
+const LANG = (navigator.language || 'en').toLowerCase().startsWith('ko') ? 'ko' : 'en';
+function tr(ko, en) { return LANG === 'ko' ? ko : en; }
 // cat: inf(보병류) / armor(기갑) / air(공중)
 const UNIT_TYPES = {
-  infantry:  { name: '보병',     icon: '🪖', cost: 0,    hp: 50,  speed: 5.0, range: 22, dmg: 7,  rate: 1.0,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '1', desc: '기본 병사 (무료, 쿨타임)' },
-  medic:     { name: '의무병',   icon: '⛑️', cost: 100,  hp: 150, speed: 5.0, range: 16, dmg: 4,  rate: 1.2,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '2', heal: 7, healRange: 11, desc: '주변 아군 치료' },
-  tank:      { name: '탱크병',   icon: '🛡️', cost: 100,  hp: 100, speed: 3.6, range: 28, dmg: 26, rate: 2.4,  cat: 'armor', hitAir: false, radius: 2.2, height: 1.4, key: '3', splash: 4, desc: '범위 포격 (공중 공격 불가)' },
-  heli:      { name: '헬기병',   icon: '🚁', cost: 500,  hp: 250, speed: 8.0, range: 26, dmg: 11, rate: 0.5,  cat: 'air',   hitAir: true,  radius: 2.6, height: 0.6, key: '4', fly: 10, desc: '빠른 공중 유닛, 기갑에 강함' },
-  apc:       { name: '장갑차병', icon: '🚙', cost: 1000, hp: 500, speed: 5.5, range: 24, dmg: 6,  rate: 0.22, cat: 'armor', hitAir: true,  radius: 2.3, height: 1.9, key: '5', desc: '튼튼함, 대공 기관총' },
-  sniper:    { name: '저격수',   icon: '🎯', cost: 5000, hp: 50,  speed: 4.0, range: 65, dmg: 95, rate: 3.2,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '6', desc: '초장거리 일격필살' },
-  commander: { name: '사령관',   icon: '⭐', cost: 0,    hp: 100, speed: 4.5, range: 22, dmg: 12, rate: 1.1,  cat: 'inf',   hitAir: true,  radius: 0.9, height: 1.6, desc: '죽으면 패배!' },
+  infantry:  { name: tr('보병', 'Infantry'),     icon: '🪖', cost: 0,    hp: 50,  speed: 5.0, range: 22, dmg: 7,  rate: 1.0,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '1', desc: tr('기본 병사 (무료, 쿨타임)', 'Basic soldier (free, cooldown)') },
+  medic:     { name: tr('의무병', 'Medic'),   icon: '⛑️', cost: 100,  hp: 150, speed: 5.0, range: 16, dmg: 4,  rate: 1.2,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '2', heal: 7, healRange: 11, desc: tr('주변 아군 치료', 'Heals nearby allies') },
+  tank:      { name: tr('탱크병', 'Tank'),   icon: '🛡️', cost: 100,  hp: 100, speed: 3.6, range: 28, dmg: 26, rate: 2.4,  cat: 'armor', hitAir: false, radius: 2.2, height: 1.4, key: '3', splash: 4, desc: tr('범위 포격 (공중 공격 불가)', 'Splash damage (no anti-air)') },
+  heli:      { name: tr('헬기병', 'Heli'),   icon: '🚁', cost: 500,  hp: 250, speed: 8.0, range: 26, dmg: 11, rate: 0.5,  cat: 'air',   hitAir: true,  radius: 2.6, height: 0.6, key: '4', fly: 10, desc: tr('빠른 공중 유닛, 기갑에 강함', 'Fast air unit, strong vs armor') },
+  apc:       { name: tr('장갑차병', 'APC'), icon: '🚙', cost: 1000, hp: 500, speed: 5.5, range: 24, dmg: 6,  rate: 0.22, cat: 'armor', hitAir: true,  radius: 2.3, height: 1.9, key: '5', desc: tr('튼튼함, 대공 기관총', 'Tough, anti-air machine gun') },
+  sniper:    { name: tr('저격수', 'Sniper'),   icon: '🎯', cost: 5000, hp: 50,  speed: 4.0, range: 65, dmg: 95, rate: 3.2,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '6', desc: tr('초장거리 일격필살', 'Extreme range, one-shot kills') },
+  commander: { name: tr('사령관', 'Commander'),   icon: '⭐', cost: 0,    hp: 100, speed: 4.5, range: 22, dmg: 12, rate: 1.1,  cat: 'inf',   hitAir: true,  radius: 0.9, height: 1.6, desc: tr('죽으면 패배!', 'If it dies, you lose!') },
 };
 const BUY_ORDER = ['infantry', 'medic', 'tank', 'heli', 'apc', 'sniper'];
 const TYPE_LIST = ['infantry', 'medic', 'tank', 'heli', 'apc', 'sniper', 'commander'];
@@ -40,9 +43,9 @@ function factoryCost(n) { return 200 + 200 * n; }
 
 // 영구 업그레이드 (타이쿤 상점)
 const UPGRADES = {
-  eco:   { name: '경제 개발', icon: '💰', desc: '기본 수입 +20%', max: 5 },
-  armor: { name: '장갑 강화', icon: '🧱', desc: '모든 유닛 체력 +10%', max: 5 },
-  fire:  { name: '화력 강화', icon: '🔥', desc: '모든 유닛 공격력 +10%', max: 5 },
+  eco:   { name: tr('경제 개발', 'Economy'), icon: '💰', desc: tr('기본 수입 +20%', 'Base income +20%'), max: 5 },
+  armor: { name: tr('장갑 강화', 'Armor'), icon: '🧱', desc: tr('모든 유닛 체력 +10%', 'All units HP +10%'), max: 5 },
+  fire:  { name: tr('화력 강화', 'Firepower'), icon: '🔥', desc: tr('모든 유닛 공격력 +10%', 'All units damage +10%'), max: 5 },
 };
 function upgradeCost(lvl) { return 2000 * (lvl + 1); }
 

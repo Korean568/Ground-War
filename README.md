@@ -1,14 +1,87 @@
-# The Ground War
+# Ground War
+
+3D multiplayer war tycoon game (browser, Three.js)
+
+## ▶ Play now: https://korean568.github.io/The-Ground-War/
+
+The game follows your browser language: Korean browsers get Korean, everything else gets English.
+
+[한국어 설명은 아래에 있습니다.](#한국어)
+
+- Works on PC and mobile (landscape recommended on mobile; switch Mobile Mode from the menu)
+- Web multiplayer: players who open the same page connect peer-to-peer (WebRTC). Pick the same mode at the same time as your friend.
+  (Some school or office networks block P2P. If so, run the server below.)
+
+## How to run
+
+1. Install [Node.js](https://nodejs.org)
+2. Double-click `게임실행.bat` (or run `npm install` then `npm start` in a terminal)
+3. Open `http://localhost:3000` in your browser
+4. **Friends on the same Wi-Fi** can join at the `http://192.168.x.x:3000` address shown in the server window and get matched with you.
+
+> Opening `public/index.html` directly lets you play against the AI, but multiplayer needs the server.
+
+### Multiplayer in the artifact (claude.ai) version
+
+1. Invite your friend from the artifact's **Share** menu. (People who open a public link can't connect live.)
+2. Your friend opens the link while **signed in** to claude.ai.
+3. Both of you press **"Find Match"** at the same time to connect. (No opponent within 30 seconds → you play the AI.)
+
+Local test: start the server and open `http://localhost:3000/artifact.html?mockroom` in two tabs to match the same way.
+
+## Rules
+
+| Unit | Cost | HP | Notes |
+|---|---|---|---|
+| 🪖 Infantry | Free (3s cooldown) | 50 | Basic soldier |
+| ⛑️ Medic | $100 | 150 | Heals nearby allies |
+| 🛡️ Tank | $100 | 100 | Splash damage, can't hit air |
+| 🚁 Heli | $500 | 250 | Fast, strong vs armor |
+| 🚙 APC | $1000 | 500 | Tough, anti-air |
+| 🎯 Sniper | $5000 | 50 | Extreme range, one-shot kills |
+| ⭐ Commander | Starting unit | 100 | **If it dies, you lose** |
+
+- Each kill: **$50** / Win: **$10,000**
+- Money keeps piling up in your wallet (tycoon). Build **factories** during a match to raise income, and buy permanent **Base Upgrades** from the menu.
+- **Join the fight**: click an ally, press `F` → WASD move, mouse aim, click to fire, `Q` to return
+- If no opponent is found within 15 seconds, you play the **learning AI**
+  - The AI learns from your past matches and every player's matches on the server: favorite units, first-attack timing and economy, then counters them
+  - AI level rises with your level and win streak (1–10)
+- First-time players start with the **tutorial** (easy AI)
+
+## Team modes (main menu)
+
+- **🎯 Team Deathmatch**: fight in person, no commander. 25 vs 25 (empty slots are AI). 1 point per kill; the match ends after 4 minutes or at 80 points, and the higher score wins.
+- **⛰️ King of the Hill**: same rules, plus **+10 points** for capturing the hill in the middle. Retaking it gives another +10.
+- Teams are 2 random countries out of 38 (flags drawn automatically). The first player joins the first country drawn; later players alternate.
+- 6 weapons: Assault Rifle · SMG · Shotgun · Sniper Rifle · LMG · Rocket Launcher + grenades (G)
+- The AI learns players' weapon picks, routes and hill tactics, then picks counter weapons and lanes.
+- Controls: WASD, Shift sprint, click to fire, right-click aim, R reload, G grenade, 1–6 weapons, Tab scoreboard
+
+## Controls
+
+| Key | Action |
+|---|---|
+| 1–6 | Build units |
+| E | Build factory |
+| Z / X | Attack / Defend |
+| F / Q | Join fight / Return |
+| WASD, wheel, right-drag | Camera |
+| ESC | Menu / Surrender |
+
+---
+
+## 한국어
 
 3D 멀티플레이 전쟁 타이쿤 게임 (브라우저, Three.js)
 
-## ▶ 바로 플레이: https://korean568.github.io/The-Ground-War/
+게임 화면은 브라우저 언어를 따릅니다. 한국어 브라우저는 한국어, 그 외에는 영어로 표시됩니다.
 
 - PC와 모바일 모두 지원 (모바일은 가로 화면 권장, 메뉴에서 모바일 모드 전환 가능)
 - 웹 버전 멀티플레이: 같은 페이지를 연 사람끼리 P2P(WebRTC)로 연결됩니다. 친구와 동시에 같은 모드를 고르세요.
   (일부 학교/회사 네트워크는 P2P 연결을 막을 수 있어요. 그럴 땐 아래 서버 실행 방법을 쓰세요.)
 
-## 실행 방법
+### 실행 방법
 
 1. [Node.js](https://nodejs.org) 설치
 2. `게임실행.bat` 더블클릭 (또는 터미널에서 `npm install` 후 `npm start`)
@@ -17,7 +90,7 @@
 
 > `public/index.html`을 직접 열어도 AI 대전은 가능하지만, 멀티플레이는 서버가 필요합니다.
 
-### 아티팩트(claude.ai) 버전에서 친구와 멀티플레이
+#### 아티팩트(claude.ai) 버전에서 친구와 멀티플레이
 
 1. 아티팩트의 **공유(Share)** 메뉴에서 친구를 초대합니다. (공개 링크로 들어온 사람은 실시간 연결이 안 됩니다)
 2. 친구는 claude.ai에 **로그인**한 상태로 링크를 엽니다.
@@ -25,7 +98,7 @@
 
 로컬 테스트: 서버 실행 후 `http://localhost:3000/artifact.html?mockroom` 을 탭 두 개로 열면 같은 방식으로 매칭됩니다.
 
-## 게임 규칙
+### 게임 규칙
 
 | 병과 | 가격 | HP | 특징 |
 |---|---|---|---|
@@ -45,16 +118,16 @@
   - 레벨과 연승이 오를수록 AI 난이도 상승 (1~10)
 - 처음 하는 사람은 자동으로 **튜토리얼**(쉬운 AI) 진행
 
-## 팀 모드 (메인 메뉴)
+### 팀 모드 (메인 메뉴)
 
 - **🎯 팀 데스매치**: 사령관 없이 직접 전투. 25 vs 25 (빈 자리는 AI). 처치 1점, 4분 뒤 또는 80점 먼저 내면 끝, 점수 높은 팀 승리.
 - **⛰️ 언덕 위의 왕**: 같은 규칙 + 가운데 거점을 점령하면 **+10점**. 빼앗아도 다시 +10점.
-- 팀은 세계 37개국 중 랜덤 2개국(국기 자동 생성). 첫 사람은 먼저 뽑힌 국가, 이후 사람은 번갈아 배정.
+- 팀은 세계 38개국 중 랜덤 2개국(국기 자동 생성). 첫 사람은 먼저 뽑힌 국가, 이후 사람은 번갈아 배정.
 - 무기 6종: 돌격소총 · 기관단총 · 산탄총 · 저격소총 · 경기관총 · 로켓발사기 + 수류탄(G)
 - AI는 플레이어들의 무기 선택·이동 경로·거점 공략 패턴을 학습해 상성 무기와 길목을 고릅니다.
 - 조작: WASD, Shift 달리기, 클릭 사격, 우클릭 조준, R 재장전, G 수류탄, 1~6 무기, Tab 점수판
 
-## 조작
+### 조작
 
 | 키 | 기능 |
 |---|---|

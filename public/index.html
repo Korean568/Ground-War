@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Ground War</title>
+  <title>Ground War</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -16,7 +16,7 @@
         <img class="flag-mini" id="hud-flag-0" alt="">
         <div>
           <div class="team-name" id="hud-name-0"></div>
-          <div class="cmd-hp"><span>⭐ 사령관</span><div class="bar"><div id="hud-cmd-0"></div></div></div>
+          <div class="cmd-hp"><span data-en="⭐ Commander">⭐ 사령관</span><div class="bar"><div id="hud-cmd-0"></div></div></div>
         </div>
       </div>
       <div id="hud-center">
@@ -27,7 +27,7 @@
       <div class="team-card right" id="team-1">
         <div>
           <div class="team-name" id="hud-name-1"></div>
-          <div class="cmd-hp"><span>⭐ 사령관</span><div class="bar"><div id="hud-cmd-1"></div></div></div>
+          <div class="cmd-hp"><span data-en="⭐ Commander">⭐ 사령관</span><div class="bar"><div id="hud-cmd-1"></div></div></div>
         </div>
         <img class="flag-mini" id="hud-flag-1" alt="">
       </div>
@@ -35,8 +35,8 @@
 
     <div id="money-box">
       <div id="hud-money">$0</div>
-      <div id="hud-income">+$5/초</div>
-      <div id="hud-army">병력 0 / 50</div>
+      <div id="hud-income" data-en="+$5/s">+$5/초</div>
+      <div id="hud-army" data-en="Army 0 / 50">병력 0 / 50</div>
     </div>
 
     <div id="killfeed"></div>
@@ -45,42 +45,42 @@
     <div id="bottombar">
       <div id="buy-buttons"></div>
       <div id="actions">
-        <button class="act" id="btn-factory"><b>🏭 공장 건설</b><small id="factory-cost">$200</small><kbd>E</kbd></button>
+        <button class="act" id="btn-factory"><b data-en="🏭 Factory">🏭 공장 건설</b><small id="factory-cost">$200</small><kbd>E</kbd></button>
         <div class="stance">
-          <button class="act" id="btn-attack"><b>⚔️ 공격</b><kbd>Z</kbd></button>
-          <button class="act" id="btn-defend"><b>🛡️ 방어</b><kbd>X</kbd></button>
+          <button class="act" id="btn-attack"><b data-en="⚔️ Attack">⚔️ 공격</b><kbd>Z</kbd></button>
+          <button class="act" id="btn-defend"><b data-en="🛡️ Defend">🛡️ 방어</b><kbd>X</kbd></button>
         </div>
-        <button class="act hero" id="btn-possess"><b>🎮 직접 참전</b><kbd>F</kbd></button>
+        <button class="act hero" id="btn-possess"><b data-en="🎮 Join Fight">🎮 직접 참전</b><kbd>F</kbd></button>
       </div>
     </div>
 
     <canvas id="minimap" width="140" height="260"></canvas>
-    <div id="selinfo" class="hidden"><div id="sel-text"></div><button id="btn-sel-possess">🎮 직접 조종 (F)</button></div>
+    <div id="selinfo" class="hidden"><div id="sel-text"></div><button id="btn-sel-possess" data-en="🎮 Take Control (F)">🎮 직접 조종 (F)</button></div>
 
     <div id="crosshair" class="hidden"><div></div></div>
     <div id="hero-panel" class="hidden">
       <div id="hero-name"></div>
       <div class="bar big"><div id="hero-hp"></div></div>
       <div class="bar small"><div id="hero-reload"></div></div>
-      <div class="hint">WASD 이동 · 마우스 조준 · 클릭 사격 · <b>Q</b> 지휘 모드로 복귀 · 숫자키로 생산</div>
+      <div class="hint" data-en-html="WASD move · Mouse aim · Click fire · <b>Q</b> back to command · Number keys build">WASD 이동 · 마우스 조준 · 클릭 사격 · <b>Q</b> 지휘 모드로 복귀 · 숫자키로 생산</div>
     </div>
-    <div id="rts-hint">WASD/방향키 카메라 이동 · 휠 확대 · 우클릭 드래그 회전 · 아군 클릭 후 F로 직접 조종 · ESC 메뉴</div>
+    <div id="rts-hint" data-en="WASD/Arrows pan · Wheel zoom · Right-drag rotate · Click a unit, then F to control · ESC menu">WASD/방향키 카메라 이동 · 휠 확대 · 우클릭 드래그 회전 · 아군 클릭 후 F로 직접 조종 · ESC 메뉴</div>
 
     <div id="tutorial" class="hidden">
-      <div class="tut-head">📘 튜토리얼 <span id="tut-step"></span></div>
+      <div class="tut-head" data-en-html="📘 Tutorial <span id=&quot;tut-step&quot;></span>">📘 튜토리얼 <span id="tut-step"></span></div>
       <div id="tut-text"></div>
-      <div class="tut-btns"><button id="tut-next">다음 ▶</button><button id="tut-skip" class="ghost">건너뛰기</button></div>
+      <div class="tut-btns"><button id="tut-next" data-en="Next ▶">다음 ▶</button><button id="tut-skip" class="ghost" data-en="Skip">건너뛰기</button></div>
     </div>
   </div>
 
   <!-- ===== 타이틀 ===== -->
   <div class="screen" id="screen-title">
     <div class="panel title-panel">
-      <div class="logo">The Ground War</div>
-      <div class="logo-sub">3D 멀티플레이 전쟁 타이쿤</div>
+      <div class="logo">Ground War</div>
+      <div class="logo-sub" data-en="3D Multiplayer War Tycoon">3D 멀티플레이 전쟁 타이쿤</div>
       <div id="title-form">
-        <label>지휘관 이름<input id="inp-name" maxlength="12" placeholder="이름을 입력하세요"></label>
-        <button class="big" id="btn-title-start">게임 시작</button>
+        <label><span data-en="Commander Name">지휘관 이름</span><input id="inp-name" maxlength="12" placeholder="이름을 입력하세요" data-en-ph="Enter your name"></label>
+        <button class="big" id="btn-title-start" data-en="Start Game">게임 시작</button>
       </div>
     </div>
   </div>
@@ -88,7 +88,7 @@
   <!-- ===== 메인 메뉴 ===== -->
   <div class="screen hidden" id="screen-menu">
     <div class="panel menu-panel">
-      <div class="logo small">The Ground War</div>
+      <div class="logo small">Ground War</div>
       <div class="profile-card">
         <img class="flag-mini" id="menu-flag" alt="">
         <div class="pc-main">
@@ -98,24 +98,24 @@
         <div class="pc-money" id="menu-money"></div>
       </div>
       <div class="stats-row">
-        <div><b id="menu-wins">0</b><span>승</span></div>
-        <div><b id="menu-losses">0</b><span>패</span></div>
-        <div><b id="menu-streak">0</b><span>연승</span></div>
-        <div><b id="menu-ai">1</b><span>AI 난이도</span></div>
+        <div><b id="menu-wins">0</b><span data-en="Wins">승</span></div>
+        <div><b id="menu-losses">0</b><span data-en="Losses">패</span></div>
+        <div><b id="menu-streak">0</b><span data-en="Streak">연승</span></div>
+        <div><b id="menu-ai">1</b><span data-en="AI Level">AI 난이도</span></div>
       </div>
-      <button class="big" id="btn-match">⚔️ 매칭 시작</button>
+      <button class="big" id="btn-match" data-en="⚔️ Find Match">⚔️ 매칭 시작</button>
       <div class="mode-row">
-        <button class="mode-btn" id="btn-tdm"><b>🎯 팀 데스매치</b><small>직접 전투 · 50명 · 처치 수로 승부</small></button>
-        <button class="mode-btn" id="btn-koth"><b>⛰️ 언덕 위의 왕</b><small>거점 점령 시 +10점</small></button>
+        <button class="mode-btn" id="btn-tdm"><b data-en="🎯 Team Deathmatch">🎯 팀 데스매치</b><small data-en="FPS combat · 50 players · Most kills wins">직접 전투 · 50명 · 처치 수로 승부</small></button>
+        <button class="mode-btn" id="btn-koth"><b data-en="⛰️ King of the Hill">⛰️ 언덕 위의 왕</b><small data-en="Hold the hill for +10 pts">거점 점령 시 +10점</small></button>
       </div>
       <div class="menu-grid">
-        <button id="btn-tutorial">📘 튜토리얼</button>
-        <button id="btn-shop">🏭 기지 업그레이드</button>
-        <button id="btn-units">📖 병과 도감</button>
-        <button id="btn-mobile">📱 모바일 모드: 자동</button>
-        <button id="btn-reset" class="ghost">🔄 프로필 초기화</button>
+        <button id="btn-tutorial" data-en="📘 Tutorial">📘 튜토리얼</button>
+        <button id="btn-shop" data-en="🏭 Base Upgrades">🏭 기지 업그레이드</button>
+        <button id="btn-units" data-en="📖 Unit Guide">📖 병과 도감</button>
+        <button id="btn-mobile" data-en="📱 Mobile Mode: Auto">📱 모바일 모드: 자동</button>
+        <button id="btn-reset" class="ghost" data-en="🔄 Reset Profile">🔄 프로필 초기화</button>
       </div>
-      <div class="online" id="menu-online">서버 연결 확인 중...</div>
+      <div class="online" id="menu-online" data-en="Checking server connection...">서버 연결 확인 중...</div>
     </div>
   </div>
 
@@ -123,11 +123,11 @@
   <div class="screen hidden" id="screen-matching">
     <div class="panel">
       <div class="spinner"></div>
-      <h2 id="match-status">상대를 찾는 중...</h2>
+      <h2 id="match-status" data-en="Finding opponent...">상대를 찾는 중...</h2>
       <p id="match-sub"></p>
       <div class="row">
-        <button id="btn-match-ai">🤖 AI와 바로 대전</button>
-        <button id="btn-match-cancel" class="ghost">취소</button>
+        <button id="btn-match-ai" data-en="🤖 Play vs AI Now">🤖 AI와 바로 대전</button>
+        <button id="btn-match-cancel" class="ghost" data-en="Cancel">취소</button>
       </div>
     </div>
   </div>
@@ -135,21 +135,21 @@
   <!-- ===== 국기 업로드 ===== -->
   <div class="screen hidden" id="screen-flag">
     <div class="panel wide">
-      <h2 id="flag-title">국기를 업로드하세요</h2>
+      <h2 id="flag-title" data-en="Upload Your Flag">국기를 업로드하세요</h2>
       <div class="versus">
         <div class="vs-card">
-          <div class="vs-label" style="color:#60a5fa">우리 나라</div>
+          <div class="vs-label" style="color:#60a5fa" data-en="Your Nation">우리 나라</div>
           <canvas id="flag-preview" width="192" height="128"></canvas>
-          <input id="inp-nation" maxlength="14" placeholder="국가 이름">
+          <input id="inp-nation" maxlength="14" placeholder="국가 이름" data-en-ph="Nation name">
           <div class="row">
-            <label class="btn"><input type="file" id="inp-flag" accept="image/*" hidden>🖼️ 국기 이미지 업로드</label>
-            <button id="btn-flag-random">🎲 랜덤 국기</button>
+            <label class="btn"><input type="file" id="inp-flag" accept="image/*" hidden><span data-en="🖼️ Upload Flag">🖼️ 국기 이미지 업로드</span></label>
+            <button id="btn-flag-random" data-en="🎲 Random Flag">🎲 랜덤 국기</button>
           </div>
-          <div class="note">지갑: <b id="flag-wallet"></b> (전투 자금으로 사용됩니다)</div>
+          <div class="note" data-en-html="Wallet: <b id=&quot;flag-wallet&quot;></b> (used as battle funds)">지갑: <b id="flag-wallet"></b> (전투 자금으로 사용됩니다)</div>
         </div>
         <div class="vs-mid">VS</div>
         <div class="vs-card">
-          <div class="vs-label" style="color:#f87171" id="opp-label">상대</div>
+          <div class="vs-label" style="color:#f87171" id="opp-label" data-en="Opponent">상대</div>
           <canvas id="opp-flag" width="192" height="128"></canvas>
           <div class="opp-name" id="opp-name"></div>
           <div id="opp-status"></div>
@@ -157,8 +157,8 @@
         </div>
       </div>
       <div class="row">
-        <button class="big" id="btn-ready">⚔️ 전투 준비 완료</button>
-        <button class="ghost" id="btn-flag-back">나가기</button>
+        <button class="big" id="btn-ready" data-en="⚔️ Ready for Battle">⚔️ 전투 준비 완료</button>
+        <button class="ghost" id="btn-flag-back" data-en="Leave">나가기</button>
       </div>
     </div>
   </div>
@@ -166,12 +166,12 @@
   <!-- ===== 결과 ===== -->
   <div class="screen hidden" id="screen-result">
     <div class="panel">
-      <div class="result-title" id="result-title">승리!</div>
+      <div class="result-title" id="result-title" data-en="Victory!">승리!</div>
       <div id="result-sub"></div>
       <div class="result-list" id="result-list"></div>
       <div class="row">
-        <button class="big" id="btn-again">⚔️ 다시 매칭</button>
-        <button id="btn-result-menu" class="ghost">메인 메뉴</button>
+        <button class="big" id="btn-again" data-en="⚔️ Play Again">⚔️ 다시 매칭</button>
+        <button id="btn-result-menu" class="ghost" data-en="Main Menu">메인 메뉴</button>
       </div>
     </div>
   </div>
@@ -179,43 +179,43 @@
   <!-- ===== 상점 ===== -->
   <div class="screen hidden" id="screen-shop">
     <div class="panel wide">
-      <h2>🏭 기지 업그레이드 <span class="pill" id="shop-money"></span></h2>
-      <p class="note">승리 보상과 처치 보상으로 모은 돈으로 나라를 영구적으로 강화하세요.</p>
+      <h2 data-en-html="🏭 Base Upgrades <span class=&quot;pill&quot; id=&quot;shop-money&quot;></span>">🏭 기지 업그레이드 <span class="pill" id="shop-money"></span></h2>
+      <p class="note" data-en="Spend your win and kill rewards on permanent upgrades for your nation.">승리 보상과 처치 보상으로 모은 돈으로 나라를 영구적으로 강화하세요.</p>
       <div class="shop-grid" id="shop-grid"></div>
-      <button id="btn-shop-back" class="ghost">돌아가기</button>
+      <button id="btn-shop-back" class="ghost" data-en="Back">돌아가기</button>
     </div>
   </div>
 
   <!-- ===== 병과 도감 ===== -->
   <div class="screen hidden" id="screen-units">
     <div class="panel wide">
-      <h2>📖 병과 도감</h2>
+      <h2 data-en="📖 Unit Guide">📖 병과 도감</h2>
       <div class="unit-table" id="unit-table"></div>
-      <p class="note">상성: 탱크 → 보병 / 헬기 → 기갑 / 장갑차 → 헬기. 적 1명 처치 시 $50, 승리 시 $10,000!</p>
-      <button id="btn-units-back" class="ghost">돌아가기</button>
+      <p class="note" data-en="Counters: Tank → Infantry / Heli → Armor / APC → Heli. $50 per kill, $10,000 per win!">상성: 탱크 → 보병 / 헬기 → 기갑 / 장갑차 → 헬기. 적 1명 처치 시 $50, 승리 시 $10,000!</p>
+      <button id="btn-units-back" class="ghost" data-en="Back">돌아가기</button>
     </div>
   </div>
 
   <!-- ===== 일시정지 ===== -->
   <div class="screen hidden" id="screen-pause">
     <div class="panel">
-      <h2 id="pause-title">메뉴</h2>
-      <button class="big" id="btn-resume">계속하기</button>
-      <button id="btn-surrender" class="danger">🏳️ 항복</button>
+      <h2 id="pause-title" data-en="Menu">메뉴</h2>
+      <button class="big" id="btn-resume" data-en="Resume">계속하기</button>
+      <button id="btn-surrender" class="danger" data-en="🏳️ Surrender">🏳️ 항복</button>
     </div>
   </div>
 
   <!-- ===== 팀 모드 로비 ===== -->
   <div class="screen hidden" id="screen-tdm-lobby">
     <div class="panel wide">
-      <h2 id="tl-title">팀 데스매치</h2>
-      <p class="note" id="tl-sub">상대를 찾는 중...</p>
+      <h2 id="tl-title" data-en="Team Deathmatch">팀 데스매치</h2>
+      <p class="note" id="tl-sub" data-en="Finding players...">상대를 찾는 중...</p>
       <div class="tl-count" id="tl-count"></div>
       <div class="tl-players" id="tl-players"></div>
       <div id="tl-analysis" class="tl-analysis"></div>
       <div class="row">
-        <button class="big" id="btn-tl-start">⚔️ 지금 시작</button>
-        <button class="ghost" id="btn-tl-leave">나가기</button>
+        <button class="big" id="btn-tl-start" data-en="⚔️ Start Now">⚔️ 지금 시작</button>
+        <button class="ghost" id="btn-tl-leave" data-en="Leave">나가기</button>
       </div>
     </div>
   </div>
@@ -227,7 +227,7 @@
       <div class="t-mid"><div id="t-time">4:00</div><div id="t-mode"></div></div>
       <div class="t-team right" id="t-team-1"><b id="t-score-1">0</b><span id="t-name-1"></span><img id="t-flag-1" alt=""></div>
     </div>
-    <div id="t-hill" class="hidden"><div id="t-hill-text">거점</div><div class="t-hill-bar"><div id="t-hill-0"></div><div id="t-hill-1"></div></div></div>
+    <div id="t-hill" class="hidden"><div id="t-hill-text" data-en="Hill">거점</div><div class="t-hill-bar"><div id="t-hill-0"></div><div id="t-hill-1"></div></div></div>
     <div id="t-feed"></div>
     <div id="t-cross"><i></i><i></i><i></i><i></i></div>
     <div id="t-hitmark"></div>
@@ -235,11 +235,11 @@
       <div class="t-hp"><span>HP</span><div class="bar big"><div id="t-hp"></div></div><b id="t-hp-num">100</b></div>
       <div class="t-wpn"><div id="t-wpn-name"></div><div id="t-ammo">30 / 30</div><div id="t-gren">💣 x2</div></div>
     </div>
-    <div id="t-help">WASD 이동 · Shift 달리기 · 클릭 사격 · 우클릭 조준 · R 재장전 · G 수류탄 · 1~6 무기 · Tab 점수판 · ESC 메뉴</div>
+    <div id="t-help" data-en="WASD move · Shift sprint · Click fire · Right-click aim · R reload · G grenade · 1-6 weapons · Tab scores · ESC menu">WASD 이동 · Shift 달리기 · 클릭 사격 · 우클릭 조준 · R 재장전 · G 수류탄 · 1~6 무기 · Tab 점수판 · ESC 메뉴</div>
     <div id="t-dead" class="hidden">
-      <div id="t-dead-msg">사망</div>
+      <div id="t-dead-msg" data-en="You died">사망</div>
       <div id="t-dead-timer"></div>
-      <div class="note">다음 생명에 쓸 무기를 고르세요 (1~6)</div>
+      <div class="note" data-en="Pick a weapon for your next life (1-6)">다음 생명에 쓸 무기를 고르세요 (1~6)</div>
       <div id="t-wpn-pick"></div>
     </div>
     <div id="t-board" class="hidden"></div>

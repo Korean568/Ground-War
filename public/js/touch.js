@@ -17,7 +17,7 @@ const Touch = {
       const next = order[this.pref()];
       try { localStorage.setItem('nw_mobile', next); } catch (e) { /* 무시 */ }
       this.apply();
-      UI.toast(`📱 모바일 모드: ${{ auto: '자동', on: '켜짐', off: '꺼짐' }[next]}`);
+      UI.toast(`${tr('📱 모바일 모드', '📱 Mobile Mode')}: ${(LANG === 'ko' ? { auto: '자동', on: '켜짐', off: '꺼짐' } : { auto: 'Auto', on: 'On', off: 'Off' })[next]}`);
     };
   },
   apply() {
@@ -26,7 +26,7 @@ const Touch = {
     document.body.classList.toggle('mobile', this.on);
     if (this.on) App.noLock = true;
     const b = $('btn-mobile');
-    if (b) b.textContent = `📱 모바일 모드: ${{ auto: '자동', on: '켜짐', off: '꺼짐' }[p]}${p === 'auto' ? (this.on ? ' (켜짐)' : ' (꺼짐)') : ''}`;
+    if (b) b.textContent = `${tr('📱 모바일 모드', '📱 Mobile Mode')}: ${(LANG === 'ko' ? { auto: '자동', on: '켜짐', off: '꺼짐' } : { auto: 'Auto', on: 'On', off: 'Off' })[p]}${p === 'auto' ? (this.on ? tr(' (켜짐)', ' (on)') : tr(' (꺼짐)', ' (off)')) : ''}`;
   },
 
   mode() {
@@ -50,7 +50,7 @@ const Touch = {
       <button class="tc-btn xs" id="tc-board">📊</button>
       <button class="tc-btn xs" id="tc-menu">☰</button>
       <button class="tc-btn sm" id="tc-exit">↩️</button>
-      <div id="tc-rotate">📱↻ 가로로 돌리면 더 잘 보여요</div>`;
+      <div id="tc-rotate">${tr('📱↻ 가로로 돌리면 더 잘 보여요', '📱↻ Rotate to landscape for a better view')}</div>`;
     document.body.appendChild(ui);
     this.ui = ui;
     const hold = (id, down, up) => {

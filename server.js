@@ -6,6 +6,10 @@ const path = require('path');
 const os = require('os');
 const { WebSocketServer, WebSocket } = require('ws');
 
+// 서버 로그 언어: 한국어 시스템 → 한국어, 그 외 → 영어
+const LANG = (process.env.LANG || Intl.DateTimeFormat().resolvedOptions().locale || 'en').toLowerCase().startsWith('ko') ? 'ko' : 'en';
+function tr(ko, en) { return LANG === 'ko' ? ko : en; }
+
 const PORT = process.env.PORT || 3000;
 const PUBLIC = path.join(__dirname, 'public');
 const LEARN_FILE = path.join(__dirname, 'learning.json');
@@ -91,14 +95,14 @@ wss.on('connection', ws => {
     switch (m.type) {
       case 'queue':
         unlink(ws);
-        ws.name = String(m.name || '플레이어').slice(0, 16);
+        ws.name = String(m.name || tr('플레이어', 'Player')).slice(0, 16);
         ws.level = Number(m.level) || 1;
         if (waiting && waiting !== ws && waiting.readyState === WebSocket.OPEN) {
           const a = waiting; waiting = null;
           a.peer = ws; ws.peer = a;
           send(a, { type: 'matched', side: 0, opponent: { name: ws.name, level: ws.level } });
           send(ws, { type: 'matched', side: 1, opponent: { name: a.name, level: a.level } });
-          console.log(`[매칭] ${a.name} vs ${ws.name}`);
+          console.log(tr(`[매칭] ${a.name} vs ${ws.name}`, `[match] ${a.name} vs ${ws.name}`));
         } else {
           waiting = ws;
           send(ws, { type: 'queued' });
@@ -145,11 +149,11 @@ setInterval(() => {
 
 server.listen(PORT, () => {
   console.log('==========================================');
-  console.log('  The Ground War 서버 실행 중');
-  console.log(`  이 컴퓨터:   http://localhost:${PORT}`);
+  console.log(tr('  Ground War 서버 실행 중', '  Ground War server running'));
+  console.log(tr(`  이 컴퓨터:   http://localhost:${PORT}`, `  This PC:    http://localhost:${PORT}`));
   const nets = os.networkInterfaces();
   for (const name in nets) for (const n of nets[name]) {
-    if (n.family === 'IPv4' && !n.internal) console.log(`  같은 와이파이: http://${n.address}:${PORT}`);
+    if (n.family === 'IPv4' && !n.internal) console.log(tr(`  같은 와이파이: http://${n.address}:${PORT}`, `  Same Wi-Fi: http://${n.address}:${PORT}`));
   }
   console.log('==========================================');
 });

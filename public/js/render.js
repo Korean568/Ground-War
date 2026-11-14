@@ -1785,7 +1785,7 @@ class Renderer {
       root.add(star);
       o.star = star;
       if (this.names && this.names[side]) {
-        const lab = this.labelSprite(this.names[side] + ' 사령관', SIDE_CSS[side], 0.9);
+        const lab = this.labelSprite(this.names[side] + tr(' 사령관', ' Commander'), SIDE_CSS[side], 0.9);
         lab.position.y = 4.5;
         root.add(lab);
         o.label = lab;
@@ -2320,6 +2320,85 @@ class Renderer {
     this.camera.position.copy(pos);
     this.camera.lookAt(pos.x + dir.x, pos.y + dir.y, pos.z + dir.z);
     return this._aim;
+  }
+
+  // ----- 1인칭 (팀 모드) -----
+  updateFirstPerson(x, y, z, yaw, pitch, wpn, moving, dt) {
+    const dir = this._aim.d.set(Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch));
+    const pos = this._aim.o.set(x, y, z);
+    this.camera.position.copy(pos);
+    this.camera.lookAt(pos.x + dir.x, pos.y + dir.y, pos.z + dir.z);
+    this.updateViewmodel(wpn, moving, dt || 0.016);
+    return this._aim;
+  }
+  buildViewmodel(wpn) {
+    if (!this.vmRoot) {
+      this.vmRoot = new THREE.Group();
+      this.camera.add(this.vmRoot);
+      if (!this.camera.parent) this.scene.add(this.camera);
+      this.vmModels = {};
+      const flashMat = new THREE.SpriteMaterial({ color: 0xffd27a, transparent: true, opacity: 0, depthTest: false, blending: THREE.AdditiveBlending });
+      this.vmFlash = new THREE.Sprite(flashMat);
+      this.vmFlash.scale.set(0.18, 0.18, 1);
+      this.vmFlash.renderOrder = 1000;
+      this.vmRoot.add(this.vmFlash);
+    }
+    if (this.vmModels[wpn]) return this.vmModels[wpn];
+    const g = new THREE.Group();
+    const mk = (c, m = 0.3, r = 0.6) => new THREE.MeshStandardMaterial({ color: c, metalness: m, roughness: r, depthTest: true });
+    const dark = mk(0x1d1f22, 0.6, 0.45), metal = mk(0x3a3d42, 0.7, 0.35), wood = mk(0x5a3d22, 0.1, 0.8), olive = mk(0x4c5a33, 0.2, 0.7), skin = mk(0xd9a77e, 0, 0.9), glove = mk(0x2a2a26, 0, 0.9);
+    const box = (w, h, d, m, x, y, zz) => { const o = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, zz); g.add(o); return o; };
+    const cyl = (r, l, m, x, y, zz) => { const o = new THREE.Mesh(new THREE.CylinderGeometry(r, r, l, 10), m); o.rotation.x = Math.PI / 2; o.position.set(x, y, zz); g.add(o); return o; };
+    let len = 0.6;
+    if (wpn === 'rifle') { box(0.06, 0.09, 0.42, dark, 0, 0, 0); cyl(0.013, 0.3, metal, 0, 0.015, -0.34); box(0.045, 0.12, 0.05, dark, 0, -0.09, -0.04); box(0.05, 0.08, 0.2, olive, 0, -0.01, 0.27); box(0.02, 0.03, 0.12, metal, 0, 0.065, 0.02); len = 0.5; }
+    else if (wpn === 'smg') { box(0.055, 0.08, 0.3, dark, 0, 0, 0); cyl(0.012, 0.14, metal, 0, 0.01, -0.21); box(0.04, 0.16, 0.04, dark, 0, -0.11, -0.02); box(0.02, 0.05, 0.16, metal, 0, -0.01, 0.2); len = 0.3; }
+    else if (wpn === 'shotgun') { box(0.06, 0.08, 0.3, wood, 0, -0.01, 0.12); cyl(0.02, 0.5, metal, 0, 0.02, -0.25); cyl(0.018, 0.3, wood, 0, -0.025, -0.22); box(0.055, 0.07, 0.15, dark, 0, 0.01, -0.02); len = 0.5; }
+    else if (wpn === 'sniper') { box(0.055, 0.08, 0.5, olive, 0, 0, 0.02); cyl(0.012, 0.45, metal, 0, 0.015, -0.45); cyl(0.028, 0.24, dark, 0, 0.085, -0.02); box(0.04, 0.1, 0.05, dark, 0, -0.08, 0.02); len = 0.68; }
+    else if (wpn === 'lmg') { box(0.08, 0.11, 0.5, dark, 0, 0, 0); cyl(0.018, 0.36, metal, 0, 0.02, -0.42); box(0.12, 0.12, 0.12, olive, 0, -0.1, -0.05); box(0.06, 0.09, 0.18, dark, 0, -0.01, 0.32); len = 0.6; }
+    else if (wpn === 'rpg') { cyl(0.05, 0.9, olive, 0, 0.03, -0.1); const war = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.2, 10), metal); war.rotation.x = -Math.PI / 2; war.position.set(0, 0.03, -0.64); g.add(war); box(0.04, 0.12, 0.05, dark, 0, -0.07, 0.05); len = 0.75; }
+    // 손
+    box(0.07, 0.07, 0.11, glove, 0.0, -0.07, 0.08); box(0.08, 0.07, 0.12, glove, -0.02, -0.04, -0.2);
+    box(0.05, 0.05, 0.14, skin, -0.04, -0.07, 0.12).rotation.y = 0.35;
+    g.scale.setScalar(0.72);
+    g.traverse(o => { o.castShadow = false; o.receiveShadow = false; o.renderOrder = 999; });
+    g.userData.len = len;
+    g.visible = false;
+    this.vmRoot.add(g);
+    this.vmModels[wpn] = g;
+    return g;
+  }
+  setViewmodel(on, wpn) {
+    if (on) this.buildViewmodel(wpn);
+    if (!this.vmRoot) return;
+    for (const k in this.vmModels) this.vmModels[k].visible = on && k === wpn;
+    this.vmWpn = wpn; this.vmOn = on;
+    if (!on) this.vmFlash.material.opacity = 0;
+  }
+  viewKick(wpn) {
+    this.vmKick = Math.min(1, (this.vmKick || 0) + (wpn === 'sniper' || wpn === 'rpg' || wpn === 'shotgun' ? 1 : 0.45));
+    this.vmFlashT = 0.05;
+  }
+  viewmodelTip() {
+    const g = this.vmModels && this.vmModels[this.vmWpn];
+    if (!g || !g.visible) return null;
+    const v = new THREE.Vector3(0, 0.02, -(g.userData.len || 0.5) - 0.04);
+    g.localToWorld(v);
+    return [v.x, v.y, v.z];
+  }
+  updateViewmodel(wpn, moving, dt) {
+    if (!this.vmRoot || !this.vmOn) return;
+    const g = this.vmModels[wpn];
+    if (!g) return;
+    this.vmT = (this.vmT || 0) + dt * (moving ? 9 : 1.5);
+    const bob = moving ? 0.012 : 0.003;
+    this.vmKick = Math.max(0, (this.vmKick || 0) - dt * 7);
+    const k = this.vmKick;
+    g.position.set(0.17 + Math.cos(this.vmT * 0.5) * bob, -0.17 + Math.abs(Math.sin(this.vmT)) * bob - k * 0.02, -0.42 + k * 0.06);
+    g.rotation.set(k * 0.18, 0, 0);
+    this.vmFlashT = (this.vmFlashT || 0) - dt;
+    const f = this.vmFlash;
+    f.material.opacity = this.vmFlashT > 0 ? 1 : 0;
+    if (this.vmFlashT > 0) { f.position.set(g.position.x, g.position.y + 0.015, g.position.z - (g.userData.len || 0.5) * 0.72 - 0.04); f.material.rotation = Math.random() * 6; }
   }
 
   pick(clientX, clientY) {
