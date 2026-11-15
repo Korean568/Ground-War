@@ -8,7 +8,7 @@ const TDM = {
   PROTECT: 2,
   HP: 100,
   SPEED: 6.2,
-  HILL: { x: 0, z: 0, r: 9, h: 0.35, cap: 5, bonus: 10 },
+  HILL: { x: 0, z: 0, r: 9, h: 0.35, cap: 5, bonus: 10, perSec: 1 },
   WPN: ['rifle', 'smg', 'shotgun', 'sniper', 'lmg', 'rpg'],
   WEAPONS: {
     rifle:   { name: tr('돌격소총', 'Assault Rifle'),  icon: '🔫', dmg: 24, rate: 0.13, range: 60,  spread: 0.025, mag: 30, reload: 2.0, auto: true,  speed: 1.0,  cls: 'mid',   fx: 'infantry', desc: tr('만능 자동소총', 'All-round auto rifle') },
@@ -459,6 +459,11 @@ class TdmSim {
             this.capSeq = (this.capSeq || 0) + 1; this.lastCap = team;
           }
         } else if (team < 0) { H.prog[0] = Math.max(0, H.prog[0] - dt * 0.5); H.prog[1] = Math.max(0, H.prog[1] - dt * 0.5); }
+      }
+      // 거점을 차지한 팀은 초당 +1점 (교전 중에는 멈춤)
+      if (H.owner >= 0 && !H.contested) {
+        H.hold = (H.hold || 0) + dt;
+        while (H.hold >= 1) { H.hold -= 1; this.score[H.owner] += TDM.HILL.perSec; }
       }
     }
     if (this.t >= TDM.TIME || this.score[0] >= TDM.SCORE_LIMIT || this.score[1] >= TDM.SCORE_LIMIT) {

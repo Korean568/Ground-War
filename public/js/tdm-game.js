@@ -510,7 +510,7 @@ const TdmGame = {
       const H = this.sim ? [this.sim.hill.owner, this.sim.hill.prog[0] * 10, this.sim.hill.prog[1] * 10, this.sim.hill.contested ? 1 : 0] : (this.view && this.view.hill) || [-1, 0, 0, 0];
       $('t-hill-0').style.width = Math.min(100, H[1] / (TDM.HILL.cap * 10) * 100) + '%';
       $('t-hill-1').style.width = Math.min(100, H[2] / (TDM.HILL.cap * 10) * 100) + '%';
-      $('t-hill-text').textContent = H[3] ? tr('⚔️ 거점 교전 중!', '⚔️ Hill contested!') : H[0] >= 0 ? tr(`⛰️ 거점: ${this.names[H[0]]}`, `⛰️ Hill: ${this.names[H[0]]}`) : tr('⛰️ 거점: 중립', '⛰️ Hill: Neutral');
+      $('t-hill-text').textContent = H[3] ? tr('⚔️ 거점 교전 중!', '⚔️ Hill contested!') : H[0] >= 0 ? tr(`⛰️ 거점: ${this.names[H[0]]} (+1점/초)`, `⛰️ Hill: ${this.names[H[0]]} (+1 pt/s)`) : tr('⛰️ 거점: 중립', '⛰️ Hill: Neutral');
       if (this.hillOwnerShown !== H[0]) {
         this.hillOwnerShown = H[0];
         this.hillRing.material.color.set(H[0] >= 0 ? SIDE_COLORS[H[0]] : 0xffffff);
