@@ -53,7 +53,7 @@ Local test: start the server and open `http://localhost:3000/artifact.html?mockr
 
 ## Team modes (main menu)
 
-- **🎯 Team Deathmatch**: fight in person, no commander. 25 vs 25 (empty slots are AI). 1 point per kill; the match ends after 4 minutes or at 80 points, and the higher score wins.
+- **🎯 Team Deathmatch**: fight in person, no commander. 25 vs 25 (empty slots are AI). 1 point per kill; the round ends when a team reaches 250 points (or after 10 minutes), and the higher score wins.
 - **⛰️ King of the Hill**: same rules, plus **+10 points** for capturing the hill in the middle. Retaking it gives another +10.
 - Teams are 2 random countries out of 38 (flags drawn automatically). The first player joins the first country drawn; later players alternate.
 - 6 weapons: Assault Rifle · SMG · Shotgun · Sniper Rifle · LMG · Rocket Launcher + grenades (G)
@@ -124,7 +124,7 @@ Local test: start the server and open `http://localhost:3000/artifact.html?mockr
 
 ### 팀 모드 (메인 메뉴)
 
-- **🎯 팀 데스매치**: 사령관 없이 직접 전투. 25 vs 25 (빈 자리는 AI). 처치 1점, 4분 뒤 또는 80점 먼저 내면 끝, 점수 높은 팀 승리.
+- **🎯 팀 데스매치**: 사령관 없이 직접 전투. 25 vs 25 (빈 자리는 AI). 처치 1점, 한 팀이 250점을 내면 라운드 끝 (최대 10분), 점수 높은 팀 승리.
 - **⛰️ 언덕 위의 왕**: 같은 규칙 + 가운데 거점을 점령하면 **+10점**. 빼앗아도 다시 +10점.
 - 팀은 세계 38개국 중 랜덤 2개국(국기 자동 생성). 첫 사람은 먼저 뽑힌 국가, 이후 사람은 번갈아 배정.
 - 무기 6종: 돌격소총 · 기관단총 · 산탄총 · 저격소총 · 경기관총 · 로켓발사기 + 수류탄(G)

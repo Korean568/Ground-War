@@ -2,8 +2,8 @@
 // 직접 전투(3인칭 슈팅), 사령관 없음, 점수가 높은 팀 승리, 최소 50명(봇 포함)
 const TDM = {
   TEAM_SIZE: 25,
-  TIME: 240,
-  SCORE_LIMIT: 80,
+  TIME: 600,        // 10분 (250점에 도달할 시간이 되도록)
+  SCORE_LIMIT: 250, // 한 팀이 250점이면 라운드 종료
   RESPAWN: 4,
   PROTECT: 2,
   HP: 100,
