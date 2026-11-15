@@ -353,3 +353,8 @@ body.mobile .wpn-card { width: 100px; padding: 6px; }
 body.mobile .wpn-card small, body.mobile .wpn-card kbd { display: none; }
 body.mobile #t-board { min-width: 0; width: 94vw; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px; }
 body.mobile .tb-row { font-size: 11px; }
+
+/* 긴 유닛 이름(K-해병대원 등)이 버튼에서 줄바꿈되지 않게 */
+.buy .nm { white-space: nowrap; font-size: 12px; letter-spacing: -0.3px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+body.mobile .buy .nm { font-size: 9.5px; letter-spacing: -0.4px; }
+@media (max-width: 1100px) { .buy .nm { font-size: 11px; } }
