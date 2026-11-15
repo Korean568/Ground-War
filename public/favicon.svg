@@ -1,17 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Ground Wars">
-  <!-- Ground Wars 카드 그림: 깃발을 단 네모 탱크 (게임에 로고가 없어서 겜벗이 그린 것) -->
-  <rect x="300" y="96" width="10" height="132" fill="#e9e4d4"/>
-  <path d="M310 100 L404 126 L310 152 Z" fill="#e53935"/>
-  <rect x="120" y="300" width="296" height="70" rx="18" fill="#5d7a3a"/>
-  <rect x="176" y="236" width="150" height="76" rx="16" fill="#6f8f45"/>
-  <rect x="316" y="258" width="132" height="24" rx="10" fill="#4b6330"/>
-  <rect x="100" y="356" width="336" height="64" rx="32" fill="#2b2f24"/>
-  <g fill="#8a9178">
-    <circle cx="146" cy="388" r="20"/>
-    <circle cx="214" cy="388" r="20"/>
-    <circle cx="282" cy="388" r="20"/>
-    <circle cx="350" cy="388" r="20"/>
-    <circle cx="404" cy="388" r="16"/>
-  </g>
-  <rect x="198" y="254" width="40" height="12" rx="6" fill="#a7c26b"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32"><rect x="18" y="2" width="2" height="12" fill="#f2efe4"/><path d="M20 2 L30 5.5 L20 9 Z" fill="#e53935"/><rect x="7" y="12" width="13" height="7" rx="2" fill="#7da34a"/><rect x="18" y="13.5" width="13" height="3.5" rx="1.5" fill="#5d7a3a"/><rect x="2" y="17" width="28" height="7" rx="2.5" fill="#5d7a3a"/><rect x="1" y="23" width="30" height="8" rx="4" fill="#23271d"/></svg>
