@@ -1290,8 +1290,7 @@ class Renderer {
     };
     const pines = [], leafs = [];
     spots.forEach((p, i) => (i % 3 === 0 ? leafs : pines).push(p));
-    mk(pine.geometry('u'), pines);
-    mk(leaf.geometry('u'), leafs);
+    this.vegTrees = [mk(pine.geometry('u'), pines), mk(leaf.geometry('u'), leafs)];
 
     // 바위
     const rg = new THREE.DodecahedronGeometry(1, 1);
@@ -1321,6 +1320,7 @@ class Renderer {
       });
       im.castShadow = true; im.receiveShadow = true;
       s.add(im);
+      this.vegRocks = im;
     }
     // 덤불
     const bg = new THREE.IcosahedronGeometry(1, 1);
@@ -1343,6 +1343,7 @@ class Renderer {
       });
       im.castShadow = true; im.receiveShadow = true;
       s.add(im);
+      this.vegBush = im;
     }
     // 풀 (바람에 흔들리는 인스턴스 다발)
     {
@@ -1392,7 +1393,40 @@ class Renderer {
       });
       im.receiveShadow = true;
       s.add(im);
+      this.vegGrass = im;
     }
+  }
+
+  // ---------- 맵 테마 (평원 / 도시 / 사막 / 설원) ----------
+  setTheme(name) {
+    if (!this._themeBase) {
+      this._themeBase = {
+        top: this.skyU.uTop.value.clone(), hor: this.skyU.uHorizon.value.clone(), gr: this.skyU.uGround.value.clone(),
+        fog: this.scene.fog.density, sun: this.sun.color.clone(), sunI: this.sun.intensity, hemiG: this.hemi.groundColor.clone(), clouds: this.skyU.uClouds.value,
+        bush: this.vegBush ? this.vegBush.material.color.clone() : null,
+      };
+    }
+    const B = this._themeBase;
+    const T = {
+      plains: { ground: [1, 1, 1], top: null, hor: null, fog: 1, trees: true, grass: true, bush: null, sun: null, clouds: 1 },
+      city:   { ground: [1.45, 1.02, 2.0], top: 0x5f7896, hor: 0xc9ccd0, fog: 1.25, trees: false, grass: false, bush: 0x4c5544, sun: 0xf2ece4, clouds: 1.4 },
+      desert: { ground: [2.55, 1.45, 2.1], top: 0x3f86c8, hor: 0xead9b6, fog: 1.1, trees: false, grass: false, bush: 0x8d7a4a, sun: 0xffe2b8, clouds: 0.3 },
+      snow:   { ground: [3.05, 2.12, 4.7], top: 0x8aa3bc, hor: 0xe3e9ee, fog: 1.6, trees: true, grass: false, bush: 0xdfe6ea, sun: 0xeaf1ff, clouds: 1.6 },
+    }[name] || null;
+    const t = T || { ground: [1, 1, 1], fog: 1, trees: true, grass: true, clouds: 1 };
+    this.theme = T ? name : 'plains';
+    this.ground.material.color.setRGB(t.ground[0], t.ground[1], t.ground[2]);
+    this.skyU.uTop.value.copy(t.top != null ? new THREE.Color(t.top) : B.top);
+    this.skyU.uHorizon.value.copy(t.hor != null ? new THREE.Color(t.hor) : B.hor);
+    this.skyU.uClouds.value = B.clouds * (t.clouds != null ? t.clouds : 1);
+    this.scene.fog.color.copy(this.skyU.uHorizon.value);
+    this.scene.fog.density = B.fog * t.fog;
+    this.sun.color.copy(t.sun != null ? new THREE.Color(t.sun) : B.sun);
+    this.hemi.groundColor.copy(name === 'snow' ? new THREE.Color(0xc8d0d8) : name === 'desert' ? new THREE.Color(0x9a8258) : B.hemiG);
+    for (const m of this.vegTrees || []) m.visible = t.trees !== false;
+    if (this.vegGrass) this.vegGrass.visible = t.grass !== false;
+    if (this.vegBush && B.bush) this.vegBush.material.color.copy(t.bush != null ? new THREE.Color(t.bush) : B.bush);
+    if (this.vegRocks) this.vegRocks.material.color.set(name === 'desert' ? 0xd9b98a : name === 'snow' ? 0xe6ecf0 : 0xffffff);
   }
 
   // 전장 소품: 참호 모래주머니, 대전차 장애물, 폐허
@@ -1541,6 +1575,7 @@ class Renderer {
   clearMatch() {
     if (this.matchGroup) this.scene.remove(this.matchGroup);
     this.matchGroup = null;
+    if (this.theme && this.theme !== 'plains') this.setTheme('plains');
     for (const [, o] of this.meshes) this.scene.remove(o.root);
     for (const c of this.corpses) this.scene.remove(c.root);
     for (const f of this.fx) { this.scene.remove(f.obj); f.obj.visible = false; }
@@ -2384,6 +2419,10 @@ class Renderer {
     else if (wpn === 'sniper') { box(0.055, 0.08, 0.5, olive, 0, 0, 0.02); cyl(0.012, 0.45, metal, 0, 0.015, -0.45); cyl(0.028, 0.24, dark, 0, 0.085, -0.02); box(0.04, 0.1, 0.05, dark, 0, -0.08, 0.02); len = 0.68; }
     else if (wpn === 'lmg') { box(0.08, 0.11, 0.5, dark, 0, 0, 0); cyl(0.018, 0.36, metal, 0, 0.02, -0.42); box(0.12, 0.12, 0.12, olive, 0, -0.1, -0.05); box(0.06, 0.09, 0.18, dark, 0, -0.01, 0.32); len = 0.6; }
     else if (wpn === 'rpg') { cyl(0.05, 0.9, olive, 0, 0.03, -0.1); const war = new THREE.Mesh(new THREE.ConeGeometry(0.075, 0.2, 10), metal); war.rotation.x = -Math.PI / 2; war.position.set(0, 0.03, -0.64); g.add(war); box(0.04, 0.12, 0.05, dark, 0, -0.07, 0.05); len = 0.75; }
+    else if (wpn === 'sf') { // 특전사 소총: 검은 총몸 + 소음기 + 조준경
+      box(0.055, 0.085, 0.4, dark, 0, 0, 0); cyl(0.024, 0.3, metal, 0, 0.015, -0.36); box(0.04, 0.13, 0.05, dark, 0, -0.09, -0.03);
+      cyl(0.022, 0.16, dark, 0, 0.075, -0.02); box(0.05, 0.07, 0.18, dark, 0, -0.01, 0.26); box(0.02, 0.03, 0.08, metal, 0.035, 0.0, -0.12); len = 0.52;
+    }
     // 손
     box(0.07, 0.07, 0.11, glove, 0.0, -0.07, 0.08); box(0.08, 0.07, 0.12, glove, -0.02, -0.04, -0.2);
     box(0.05, 0.05, 0.14, skin, -0.04, -0.07, 0.12).rotation.y = 0.35;

@@ -9,7 +9,7 @@ const TDM = {
   HP: 100,
   SPEED: 6.2,
   HILL: { x: 0, z: 0, r: 9, h: 0.35, cap: 5, bonus: 10, perSec: 1 },
-  WPN: ['rifle', 'smg', 'shotgun', 'sniper', 'lmg', 'rpg'],
+  WPN: ['rifle', 'smg', 'shotgun', 'sniper', 'lmg', 'rpg', 'marine', 'sf'],
   WEAPONS: {
     rifle:   { name: tr('돌격소총', 'Assault Rifle'),  icon: '🔫', dmg: 24, rate: 0.13, range: 60,  spread: 0.025, mag: 30, reload: 2.0, auto: true,  speed: 1.0,  cls: 'mid',   fx: 'infantry', desc: tr('만능 자동소총', 'All-round auto rifle') },
     smg:     { name: tr('기관단총', 'SMG'),  icon: '💨', dmg: 16, rate: 0.075, range: 32, spread: 0.05, mag: 35, reload: 1.6, auto: true,  speed: 1.15, cls: 'close', fx: 'infantry', desc: tr('빠른 연사, 근접전', 'Fast fire, close range') },
@@ -17,24 +17,67 @@ const TDM = {
     sniper:  { name: tr('저격소총', 'Sniper Rifle'),  icon: '🎯', dmg: 90, rate: 1.3,  range: 130, spread: 0.002, mag: 5, reload: 2.8, zoom: 3.2, speed: 0.9, cls: 'long', fx: 'sniper', head: 2.5, desc: tr('헤드샷 즉사, 원거리', 'Headshots kill, long range') },
     lmg:     { name: tr('경기관총', 'LMG'),  icon: '🔥', dmg: 19, rate: 0.095, range: 65, spread: 0.04, mag: 80, reload: 4.2, auto: true,  speed: 0.85, cls: 'mid',   fx: 'apc', desc: tr('대용량 탄창, 제압', 'Big mag, suppression') },
     rpg:     { name: tr('로켓발사기', 'Rocket Launcher'), icon: '🚀', dmg: 120, rate: 1.4, range: 85, spread: 0.01, mag: 1, reload: 2.8, splash: 5.5, speed: 0.9, cls: 'long', fx: 'tank', desc: tr('범위 폭발', 'Splash explosion') },
+    // 특수 병과: 강한 총 + 빠른 이동/회복 대신 체력 75
+    marine:  { name: tr('K-해병대원', 'K-Marine'), icon: '🎖️', dmg: 30, rate: 0.11, range: 70, spread: 0.018, mag: 30, reload: 1.7, auto: true, speed: 1.12, cls: 'mid', fx: 'infantry', hp: 75, regen: 3, model: 'marine', vm: 'rifle', desc: tr('전설의 해병대원: 강한 소총, 빠름, 체력 회복 (HP 75)', 'Legendary marine: strong rifle, fast, regen (HP 75)') },
+    sf:      { name: tr('특전사', 'Spec Ops'), icon: '🦅', dmg: 34, rate: 0.1, range: 90, spread: 0.012, mag: 40, reload: 1.6, auto: true, speed: 1.15, cls: 'mid', fx: 'infantry', hp: 75, regen: 4, gren: 4, model: 'sf', vm: 'sf', desc: tr('특전사가 된 해병대원: 정밀 소총, 수류탄 4개 (HP 75)', 'Marine turned Spec Ops: precise rifle, 4 grenades (HP 75)') },
   },
-  // 엄폐물 [x, z, 폭, 깊이, 높이]  (z 대칭으로 복제됨)
-  MAP_HALF: [
-    [-18, 26, 10, 1, 3], [18, 26, 10, 1, 3], [0, 46, 14, 1, 3],
-    [-8, 36, 2.6, 2.6, 1.7], [8, 36, 2.6, 2.6, 1.7], [-28, 13, 2.6, 2.6, 1.7], [28, 13, 2.6, 2.6, 1.7],
-    [-25, 56, 3, 3, 1.7], [25, 56, 3, 3, 1.7], [-10, 63, 2.6, 2.6, 1.7], [10, 63, 2.6, 2.6, 1.7],
-    [-13, 74, 5, 1, 1.0], [13, 74, 5, 1, 1.0], [0, 70, 5, 1, 1.0],
-    [-6, 12, 5, 1, 1.0], [6, 12, 5, 1, 1.0], [-14, 6, 1, 5, 1.6], [14, 6, 1, 5, 1.6],
-  ],
-  MAP_MID: [[-30, 0, 7, 9, 4], [30, 0, 7, 9, 4]],
+  // 맵: 엄폐물 [x, z, 폭, 깊이, 높이]. half 는 z 대칭으로 복제, mid 는 가운데 줄
+  MAPS: {
+    plains: {
+      name: tr('평원 전장', 'Plains'), theme: 'plains',
+      half: [
+        [-18, 26, 10, 1, 3], [18, 26, 10, 1, 3], [0, 46, 14, 1, 3],
+        [-8, 36, 2.6, 2.6, 1.7], [8, 36, 2.6, 2.6, 1.7], [-28, 13, 2.6, 2.6, 1.7], [28, 13, 2.6, 2.6, 1.7],
+        [-25, 56, 3, 3, 1.7], [25, 56, 3, 3, 1.7], [-10, 63, 2.6, 2.6, 1.7], [10, 63, 2.6, 2.6, 1.7],
+        [-13, 74, 5, 1, 1.0], [13, 74, 5, 1, 1.0], [0, 70, 5, 1, 1.0],
+        [-6, 12, 5, 1, 1.0], [6, 12, 5, 1, 1.0], [-14, 6, 1, 5, 1.6], [14, 6, 1, 5, 1.6],
+      ],
+      mid: [[-30, 0, 7, 9, 4], [30, 0, 7, 9, 4]],
+    },
+    city: {
+      name: tr('시가전 도시', 'City Streets'), theme: 'city',
+      half: [
+        [-24, 20, 10, 12, 6], [24, 20, 10, 12, 6], [-24, 50, 10, 14, 7], [24, 50, 10, 14, 7], [0, 38, 8, 8, 5],
+        [-11, 12, 2.2, 4.5, 1.4], [11, 30, 2.2, 4.5, 1.4], [-10, 60, 4.5, 2.2, 1.4], [8, 66, 2.2, 4.5, 1.4],
+        [-6, 24, 2.4, 2.4, 1.7], [6, 52, 2.4, 2.4, 1.7],
+        [0, 72, 6, 1, 1.0], [-14, 75, 5, 1, 1.0], [14, 75, 5, 1, 1.0],
+      ],
+      mid: [[-26, 0, 8, 10, 6], [26, 0, 8, 10, 6], [-12, 0, 1, 6, 1.6], [12, 0, 1, 6, 1.6]],
+    },
+    desert: {
+      name: tr('사막 유적', 'Desert Ruins'), theme: 'desert',
+      half: [
+        [-20, 20, 5, 4, 2.5], [18, 32, 4, 5, 2.5], [-6, 44, 6, 3, 2.2], [26, 58, 5, 5, 3], [-27, 62, 4, 6, 2.6],
+        [8, 14, 7, 1.5, 1.2], [-12, 52, 8, 1.5, 1.2], [0, 70, 9, 1.5, 1.2],
+        [14, 46, 1.2, 1.2, 4], [-16, 36, 1.2, 1.2, 4], [-30, 34, 1.2, 1.2, 4],
+      ],
+      mid: [[-28, 0, 6, 8, 3.5], [28, 0, 6, 8, 3.5], [-14, 0, 1.2, 7, 1.2], [14, 0, 1.2, 7, 1.2]],
+    },
+    snow: {
+      name: tr('설원 기지', 'Snowfield'), theme: 'snow',
+      half: [
+        [-20, 30, 8, 5, 2.4], [20, 30, 8, 5, 2.4], [0, 22, 10, 1, 1.3], [-12, 56, 8, 1, 1.3], [12, 56, 8, 1, 1.3],
+        [-28, 44, 2.6, 2.6, 1.7], [28, 44, 2.6, 2.6, 1.7], [-6, 66, 2.6, 2.6, 1.7], [6, 42, 2.6, 2.6, 1.7],
+        [0, 72, 7, 1.2, 1.0], [-24, 74, 6, 1.2, 1.0], [24, 74, 6, 1.2, 1.0],
+      ],
+      mid: [[-27, 0, 8, 8, 4.5], [27, 0, 8, 8, 4.5], [-13, 0, 1, 6, 1.3], [13, 0, 1, 6, 1.3]],
+    },
+  },
+  MAP_IDS: ['plains', 'city', 'desert', 'snow'],
+  map: 'plains',
 };
-TDM.BOXES = (() => {
+TDM.BOXES = [];
+TDM.setMap = id => {
+  const M = TDM.MAPS[id] || TDM.MAPS.plains;
+  TDM.map = TDM.MAPS[id] ? id : 'plains';
   const out = [];
   const add = (x, z, w, d, h) => out.push({ x, z, w, d, h, x0: x - w / 2, x1: x + w / 2, z0: z - d / 2, z1: z + d / 2 });
-  for (const b of TDM.MAP_HALF) { add(b[0], b[1], b[2], b[3], b[4]); add(b[0], -b[1], b[2], b[3], b[4]); }
-  for (const b of TDM.MAP_MID) add(b[0], b[1], b[2], b[3], b[4]);
-  return out;
-})();
+  for (const b of M.half) { add(b[0], b[1], b[2], b[3], b[4]); add(b[0], -b[1], b[2], b[3], b[4]); }
+  for (const b of M.mid) add(b[0], b[1], b[2], b[3], b[4]);
+  TDM.BOXES = out;
+};
+TDM.setMap('plains');
+TDM.maxHp = wpn => (TDM.WEAPONS[wpn] && TDM.WEAPONS[wpn].hp) || TDM.HP;
 const BOT_NAMES = tr(['독수리', '번개', '호랑이', '늑대', '매', '곰', '여우', '표범', '상어', '코브라', '바람', '천둥', '유령', '불꽃', '강철', '그림자', '사자', '황소', '전갈', '돌풍', '레이븐', '팔콘', '바이퍼', '카이저', '블레이드',
   '해일', '폭풍', '용', '들소', '재규어', '맹금', '화산', '빙하', '철벽', '탱고', '알파', '브라보', '델타', '에코', '폭스', '고스트', '스톰', '타이탄', '퓨마', '하운드', '불사조', '검독수리', '흑표', '백곰', '은빛여우'], [
   'Eagle', 'Bolt', 'Tiger', 'Wolf', 'Hawk', 'Bear', 'Fox', 'Leopard', 'Shark', 'Cobra', 'Wind', 'Thunder', 'Ghost', 'Blaze', 'Steel', 'Shadow', 'Lion', 'Bull', 'Scorpion', 'Gust', 'Raven', 'Falcon', 'Viper', 'Kaiser', 'Blade',
@@ -122,7 +165,7 @@ const TdmLearn = {
   },
   // 모델을 보고 봇 무기 비율 결정 (상성 대응)
   botWeights(model, diff) {
-    const base = { rifle: 3, smg: 1.5, shotgun: 1, sniper: 1, lmg: 1.5, rpg: 0.7 };
+    const base = { rifle: 3, smg: 1.5, shotgun: 1, sniper: 1, lmg: 1.5, rpg: 0.7, marine: 0.35, sf: 0.25 };
     if (!model || diff <= 0) return base;
     const k = Math.min(1.5, 0.4 + diff * 0.12);
     const c = model.cls;
@@ -153,6 +196,8 @@ class TdmSim {
   // humans: [{peer, name, team}], teams: [countryIdx, countryIdx]
   constructor(opts) {
     this.mode = opts.mode; this.teams = opts.teams; this.diff = opts.diff;
+    TDM.setMap(opts.map || 'plains');
+    this.map = TDM.map;
     this.model = opts.model;
     this.t = 0; this.score = [0, 0]; this.over = false; this.winner = -1;
     this.events = []; this.kills = []; this.killSeq = 0; this.booms = []; this.boomSeq = 0;
@@ -216,10 +261,11 @@ class TdmSim {
   }
   respawn(s) {
     const p = this.spawnPos(s.team);
-    Object.assign(s, { x: p.x, z: p.z, y: 0, yaw: s.team === 0 ? Math.PI : 0, pitch: 0, hp: TDM.HP, alive: true, prot: TDM.PROTECT, cd: 0, gren: 2 });
+    if (!s.human) { s.wpn = this.pickWeapon(); s.bot = Object.assign(s.bot || this.newBrain(s), { target: 0, seenT: 0 }); }
     const W = TDM.WEAPONS[s.wpn];
+    // 병과별 체력 (특수 병과는 75) / 수류탄 수
+    Object.assign(s, { x: p.x, z: p.z, y: 0, yaw: s.team === 0 ? Math.PI : 0, pitch: 0, hp: TDM.maxHp(s.wpn), alive: true, prot: TDM.PROTECT, cd: 0, gren: W.gren || 2 });
     s.ammo = W.mag; s.reloadT = 0;
-    if (!s.human) { s.wpn = this.pickWeapon(); s.ammo = TDM.WEAPONS[s.wpn].mag; s.bot = Object.assign(s.bot || this.newBrain(s), { target: 0, seenT: 0 }); }
     this.events.push({ k: 'spawn', id: s.id, side: s.team });
   }
 
@@ -410,6 +456,7 @@ class TdmSim {
     for (const s of this.soldiers) {
       if (!s.alive) { s.respawnT -= dt; if (s.respawnT <= 0) this.respawn(s); continue; }
       if (s.prot > 0) s.prot -= dt;
+      { const RW = TDM.WEAPONS[s.wpn]; if (RW && RW.regen && s.hp < TDM.maxHp(s.wpn)) s.hp = Math.min(TDM.maxHp(s.wpn), s.hp + RW.regen * dt); }
       if (s.cd > 0) s.cd -= dt;
       if (s.reloadT > 0) { s.reloadT -= dt; if (s.reloadT <= 0) s.ammo = TDM.WEAPONS[s.wpn].mag; }
       if (s.bot) this.updateBot(s, dt);
@@ -511,7 +558,7 @@ class TdmSim {
       h: this.mode === 'koth' ? [this.hill.owner, Math.round(this.hill.prog[0] * 10), Math.round(this.hill.prog[1] * 10), this.hill.contested ? 1 : 0] : null,
       g: this.proj.map(p => [Math.round(p.x * 10) / 10, Math.round(p.y * 10) / 10, Math.round(p.z * 10) / 10]),
       hn: this.soldiers.filter(s => s.human).map(s => [s.id, s.human, String(s.name).slice(0, 14)]),
-      o: this.over ? 1 : 0, w: this.winner,
+      o: this.over ? 1 : 0, w: this.winner, map: this.map,
     };
   }
 }

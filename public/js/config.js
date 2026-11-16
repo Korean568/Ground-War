@@ -12,8 +12,8 @@ const UNIT_TYPES = {
   sniper:    { name: tr('저격수', 'Sniper'),   icon: '🎯', cost: 1000, hp: 50,  speed: 4.0, range: 65, dmg: 95, rate: 3.2,  cat: 'inf',   hitAir: true,  radius: 0.8, height: 1.4, key: '6', desc: tr('초장거리 일격필살', 'Extreme range, one-shot kills') },
   commander: { name: tr('사령관', 'Commander'),   icon: '⭐', cost: 0,    hp: 100, speed: 4.5, range: 22, dmg: 12, rate: 1.1,  cat: 'inf',   hitAir: true,  radius: 0.9, height: 1.6, desc: tr('죽으면 패배!', 'If it dies, you lose!') },
   // 엘리트 유닛
-  marine:    { name: tr('전설의 K-해병대원', 'Legendary K-Marine'), short: tr('K-해병대원', 'K-Marine'), icon: '🎖️', cost: 5000, hp: 450, speed: 6.0, range: 32, dmg: 24, rate: 0.35, cat: 'inf', hitAir: true, radius: 0.9, height: 1.5, key: '7', regen: 4, desc: tr('누구도 막을 수 없는 전설의 해병대원. 빠른 연사, 체력 자동 회복', 'An unstoppable legend. Rapid fire, regenerates HP') },
-  sf:        { name: tr('특전사가 된 전설의 K-해병대원', 'Legendary K-Marine turned Special Forces'), short: tr('특전사', 'Spec Ops'), icon: '🦅', cost: 10000, hp: 800, speed: 7.0, range: 42, dmg: 42, rate: 0.3, cat: 'inf', hitAir: true, radius: 0.95, height: 1.55, key: '8', regen: 8, splash: 3, desc: tr('전설이 특전사가 되었다. 장거리 정밀 사격 + 수류탄, 빠른 회복', 'The legend joined Special Forces. Long-range precision fire + grenades, fast regen') },
+  marine:    { name: tr('전설의 K-해병대원', 'Legendary K-Marine'), short: tr('K-해병대원', 'K-Marine'), icon: '🎖️', cost: 5000, hp: 75, speed: 6.0, range: 32, dmg: 24, rate: 0.35, cat: 'inf', hitAir: true, radius: 0.9, height: 1.5, key: '7', regen: 4, desc: tr('누구도 막을 수 없는 전설의 해병대원. 빠른 연사, 체력 자동 회복', 'An unstoppable legend. Rapid fire, regenerates HP') },
+  sf:        { name: tr('특전사가 된 전설의 K-해병대원', 'Legendary K-Marine turned Special Forces'), short: tr('특전사', 'Spec Ops'), icon: '🦅', cost: 10000, hp: 75, speed: 7.0, range: 42, dmg: 42, rate: 0.3, cat: 'inf', hitAir: true, radius: 0.95, height: 1.55, key: '8', regen: 8, splash: 3, desc: tr('전설이 특전사가 되었다. 장거리 정밀 사격 + 수류탄, 빠른 회복', 'The legend joined Special Forces. Long-range precision fire + grenades, fast regen') },
 };
 const BUY_ORDER = ['infantry', 'medic', 'tank', 'heli', 'apc', 'sniper', 'marine', 'sf'];
 const TYPE_LIST = ['infantry', 'medic', 'tank', 'heli', 'apc', 'sniper', 'commander', 'marine', 'sf'];
@@ -54,5 +54,7 @@ const UPGRADES = {
 };
 function upgradeCost(lvl) { return 2000 * (lvl + 1); }
 
+// 국가 전쟁 모드 전장 테마 (겉모습만 바뀜)
+const RTS_THEMES = ['plains', 'desert', 'snow', 'city'];
 const SIDE_COLORS = [0x2f6fdc, 0xd8352f];
 const SIDE_CSS = ['#3b82f6', '#ef4444'];

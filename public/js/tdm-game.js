@@ -155,7 +155,8 @@ const TdmGame = {
     if (Net.globalLearnTdm) sums.push(...Net.globalLearnTdm);
     const model = TdmLearn.model(sums);
     const diff = Profile.aiDifficulty();
-    const sim = new TdmSim({ mode: this.mode, teams, humans, diff, model });
+    const map = TDM.MAP_IDS[Math.floor(Math.random() * TDM.MAP_IDS.length)];
+    const sim = new TdmSim({ mode: this.mode, teams, humans, diff, model, map });
     this.sim = sim; this.role = this.net ? 'host' : 'solo';
     this.analysis = TdmLearn.analysisText(model, diff);
     const me = sim.findHuman(my);
@@ -168,6 +169,7 @@ const TdmGame = {
     this.codec = TdmCodec.newState();
     this.lastQ = -1;
     this.analysis = th.an || [];
+    TDM.setMap(th.map || 'plains');
     const v = TdmCodec.decode(th, this.codec);
     this.view = v;
     const me = v.soldiers.find(s => s.id === myId);
@@ -189,7 +191,10 @@ const TdmGame = {
     App.demo = null;
     const imgs = await Promise.all(this.flags.map(f => Flags.load(f)));
     App.r.initMatch(myTeam, imgs, this.names);
+    const MP = TDM.MAPS[TDM.map];
+    if (App.r.setTheme) App.r.setTheme(MP.theme);
     this.buildMap();
+    setTimeout(() => UI.toast(tr(`🗺️ 맵: ${MP.name}`, `🗺️ Map: ${MP.name}`), 2500), 2800);
     this.active = true;
     UI.hideAll();
     $('hud').classList.add('hidden');
@@ -211,7 +216,13 @@ const TdmGame = {
   buildMap() {
     const r = App.r, g = new THREE.Group();
     const std = (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.85, metalness: 0.05 }, o || {}));
-    const mWall = std(0x9a9284), mCrate = std(0x8a6a3c), mSand = std(0xbfa977), mHouse = std(0xb9ad97), mRoof = std(0x6d4b3a);
+    const PAL = {
+      plains: [0x9a9284, 0x8a6a3c, 0xbfa977, 0xb9ad97, 0x6d4b3a],
+      city:   [0x7d7d7d, 0x6b5a48, 0x4f5d70, 0x8f8a84, 0x3f3f44],
+      desert: [0xa98b62, 0x9c7a4c, 0xd8c08a, 0xc9a66b, 0xa07c48],
+      snow:   [0x8f969c, 0x7a5a36, 0xeef2f6, 0x6b4a32, 0xe8eef2],
+    }[(TDM.MAPS[TDM.map] || {}).theme] || [0x9a9284, 0x8a6a3c, 0xbfa977, 0xb9ad97, 0x6d4b3a];
+    const mWall = std(PAL[0]), mCrate = std(PAL[1]), mSand = std(PAL[2]), mHouse = std(PAL[3]), mRoof = std(PAL[4]);
     const box = new THREE.BoxGeometry(1, 1, 1);
     for (const b of TDM.BOXES) {
       const mat = b.h >= 3.5 ? mHouse : b.h >= 2.5 ? mWall : b.h >= 1.5 ? mCrate : mSand;
@@ -302,7 +313,7 @@ const TdmGame = {
     if (alive && !this.wasAlive) {
       this.me.x = s.x; this.me.z = s.z; this.yaw = this.myTeam === 0 ? Math.PI : 0; this.pitch = 0;
       TDM.WPN.forEach(k => { this.ammo[k] = TDM.WEAPONS[k].mag; });
-      this.gren = 2; this.reloadT = 0;
+      this.gren = TDM.WEAPONS[this.wpn].gren || 2; this.reloadT = 0;
       $('t-dead').classList.add('hidden');
     }
     if (!alive && this.wasAlive) this.onMyDeath();
@@ -370,9 +381,9 @@ const TdmGame = {
     for (const x of sols) {
       if (!x.alive) continue;
       const mine = x.id === this.myId;
-      list.push({ id: x.id, type: (mine ? this.wpn : x.wpn) === 'sniper' ? 'sniper' : 'infantry', side: x.team, alive: true,
+      list.push({ id: x.id, type: (TDM.WEAPONS[mine ? this.wpn : x.wpn] || {}).model || ((mine ? this.wpn : x.wpn) === 'sniper' ? 'sniper' : 'infantry'), side: x.team, alive: true,
         x: mine ? this.me.x : x.x, y: mine ? meY : (x.y || 0), z: mine ? this.me.z : x.z, yaw: mine ? this.yaw : x.yaw,
-        hp: x.hp, maxHp: TDM.HP, ctrl: !!x.human });
+        hp: x.hp, maxHp: TDM.maxHp(x.wpn), ctrl: !!x.human });
     }
     App.r.sync(list, [{ factories: 0 }, { factories: 0 }], fdt);
     const mm = App.r.meshes.get(this.myId);
@@ -387,11 +398,11 @@ const TdmGame = {
       App.r.camMode = 'fps'; App.r.followId = this.myId;
       if (mm) mm.root.visible = false;
       const scoped = this.aimHeld && this.wpn === 'sniper';
-      App.r.setViewmodel(!scoped, this.wpn);
+      App.r.setViewmodel(!scoped, TDM.WEAPONS[this.wpn].vm || this.wpn);
       this.scopeEl.classList.toggle('hidden', !scoped);
       const k = this.keys;
       const moving = !!(Touch.axis.x || Touch.axis.y || k.KeyW || k.KeyA || k.KeyS || k.KeyD);
-      const aim = App.r.updateFirstPerson(this.me.x, meY + 1.62, this.me.z, this.yaw, this.pitch + this.recoil, this.wpn, moving, fdt);
+      const aim = App.r.updateFirstPerson(this.me.x, meY + 1.62, this.me.z, this.yaw, this.pitch + this.recoil, TDM.WEAPONS[this.wpn].vm || this.wpn, moving, fdt);
       if (aim && (App.pointerLocked || App.noLock)) this.tryFire(aim);
     } else {
       App.r.setViewmodel(false);
@@ -496,7 +507,7 @@ const TdmGame = {
     $('t-time').textContent = UI.time(Math.max(0, TDM.TIME - t));
     const s = this.mySoldier();
     const hp = s ? s.hp : 0;
-    $('t-hp').style.width = Math.round(hp / TDM.HP * 100) + '%';
+    $('t-hp').style.width = Math.round(hp / TDM.maxHp(s ? s.wpn : this.wpn) * 100) + '%';
     $('t-hp').style.background = hp < 35 ? '#ef4444' : '#4ade80';
     $('t-hp-num').textContent = Math.ceil(hp);
     const W = TDM.WEAPONS[this.wpn];

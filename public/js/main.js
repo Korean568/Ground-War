@@ -172,7 +172,7 @@ const App = {
       $('opp-status').textContent = tr('✅ 국기 업로드 완료 · 준비됨', '✅ Flag uploaded · Ready');
       this.tryStartMP();
     });
-    Net.on('start', () => { if (this.pre && this.pre.mode === 'guest' && this.pre.ready) this.startMatch(); });
+    Net.on('start', m => { if (this.pre && this.pre.mode === 'guest' && this.pre.ready) this.startMatch(m && m.theme); });
     Net.on('cmd', m => {
       const M = this.match;
       if (M && M.mode === 'host' && M.sim) M.sim.command(1 - M.mySide, m.c);
@@ -383,13 +383,14 @@ const App = {
   tryStartMP() {
     const p = this.pre;
     if (p && p.mode === 'host' && p.ready && p.peer) {
-      Net.send({ type: 'start' });
-      this.startMatch();
+      const theme = RTS_THEMES[Math.floor(Math.random() * RTS_THEMES.length)];
+      Net.send({ type: 'start', theme });
+      this.startMatch(theme);
     }
   },
 
   // ---------- 경기 시작 ----------
-  async startMatch() {
+  async startMatch(themeIn) {
     const p = this.pre;
     if (!p) return;
     this.pre = null;
@@ -401,6 +402,9 @@ const App = {
     flags[other] = p.peer ? p.peer.flag : p.oppFlag;
     const imgs = await Promise.all(flags.map(f => Flags.load(f)));
     this.r.initMatch(me, imgs, names);
+    // 맵 테마: 혼자/방장은 랜덤, 게스트는 방장이 정한 것
+    const theme = RTS_THEMES.includes(themeIn) ? themeIn : RTS_THEMES[Math.floor(Math.random() * RTS_THEMES.length)];
+    if (this.r.setTheme) this.r.setTheme(theme);
 
     const m = {
       mode: p.mode, mySide: me, names, flags, diff: p.diff || 0,

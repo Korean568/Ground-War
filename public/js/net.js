@@ -209,7 +209,7 @@ const RoomNet = {
         break;
       }
       case 'start':
-        this.setP({ go: 1 });
+        this.setP({ go: 1 + Math.max(0, RTS_THEMES.indexOf(m.theme)) });
         setTimeout(() => { if (this.pres.go) this.setP({ fl: null }); }, 3000);
         break;
       case 'cmd':
@@ -285,7 +285,7 @@ const RoomNet = {
     }
     if (pp.go && !this.startSeen && this.flagSeen) {
       this.startSeen = true;
-      Net.emit('start', {});
+      Net.emit('start', { theme: RTS_THEMES[(Number(pp.go) || 1) - 1] });
       setTimeout(() => this.setP({ fl: null }), 3000);
     }
     if (pp.sn && pp.sn !== this.lastSn) {

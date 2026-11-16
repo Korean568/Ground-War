@@ -39,8 +39,8 @@ Local test: start the server and open `http://localhost:3000/artifact.html?mockr
 | 🚁 Heli | G$100 | 250 | Fast, strong vs armor |
 | 🚙 APC | G$500 | 300 | Tough, anti-air |
 | 🎯 Sniper | G$1000 | 50 | Extreme range, one-shot kills |
-| 🎖️ Legendary K-Marine | G$5000 | 450 | Rapid fire, regenerates HP |
-| 🦅 Legendary K-Marine turned Special Forces | G$10000 | 800 | Long-range fire + grenades, fast regen |
+| 🎖️ Legendary K-Marine | G$5000 | 75 | Rapid fire, regenerates HP |
+| 🦅 Legendary K-Marine turned Special Forces | G$10000 | 75 | Long-range fire + grenades, fast regen |
 | ⭐ Commander | Starting unit | 100 | **If it dies, you lose** |
 
 - Each kill: **G$50** / Win: **G$10,000** (G$ = Ground Dollars)
@@ -57,14 +57,16 @@ Local test: start the server and open `http://localhost:3000/artifact.html?mockr
 - **⛰️ King of the Hill**: same rules, plus **+10 points** for capturing the hill in the middle (retaking it gives another +10), and the team holding it earns **+1 point per second** (paused while contested).
 - Teams are 2 random countries out of 38 (flags drawn automatically). The first player joins the first country drawn; later players alternate.
 - 6 weapons: Assault Rifle · SMG · Shotgun · Sniper Rifle · LMG · Rocket Launcher + grenades (G)
+- 2 special classes (HP 75): 🎖️ K-Marine (strong rifle, fast, regen) · 🦅 Spec Ops (precise suppressed rifle, 4 grenades)
+- Maps (random each match): Plains · City Streets · Desert Ruins · Snowfield. The commander mode also gets a random battlefield look.
 - The AI learns players' weapon picks, routes and hill tactics, then picks counter weapons and lanes.
-- Controls: WASD, Shift sprint, click to fire, right-click aim, R reload, G grenade, 1–6 weapons, Tab scoreboard
+- Controls: WASD, Shift sprint, click to fire, right-click aim, R reload, G grenade, 1–8 weapons, Tab scoreboard
 
 ## Controls
 
 | Key | Action |
 |---|---|
-| 1–6 | Build units |
+| 1–8 | Build units |
 | E | Build factory |
 | Z / X | Attack / Defend |
 | F / Q | Join fight / Return |
@@ -110,8 +112,8 @@ Local test: start the server and open `http://localhost:3000/artifact.html?mockr
 | 🚁 헬기병 | G$100 | 헬기 250 | 빠름, 기갑에 강함 |
 | 🚙 장갑차병 | G$500 | 장갑차 300 | 튼튼함, 대공 |
 | 🎯 저격수 | G$1000 | 50 | 초장거리 일격 |
-| 🎖️ 전설의 K-해병대원 | G$5000 | 450 | 빠른 연사, 체력 자동 회복 |
-| 🦅 특전사가 된 전설의 K-해병대원 | G$10000 | 800 | 장거리 정밀 사격 + 수류탄, 빠른 회복 |
+| 🎖️ 전설의 K-해병대원 | G$5000 | 75 | 빠른 연사, 체력 자동 회복 |
+| 🦅 특전사가 된 전설의 K-해병대원 | G$10000 | 75 | 장거리 정밀 사격 + 수류탄, 빠른 회복 |
 | ⭐ 사령관 | 기본 | 100 | **죽으면 패배** |
 
 - 적 1명 처치: **G$50** / 승리: **G$10,000** (G$ = 그라운드 달러)
@@ -128,14 +130,16 @@ Local test: start the server and open `http://localhost:3000/artifact.html?mockr
 - **⛰️ 언덕 위의 왕**: 같은 규칙 + 가운데 거점을 점령하면 **+10점** (빼앗아도 다시 +10점), 거점을 차지한 팀은 **초당 +1점** (교전 중엔 멈춤).
 - 팀은 세계 38개국 중 랜덤 2개국(국기 자동 생성). 첫 사람은 먼저 뽑힌 국가, 이후 사람은 번갈아 배정.
 - 무기 6종: 돌격소총 · 기관단총 · 산탄총 · 저격소총 · 경기관총 · 로켓발사기 + 수류탄(G)
+- 특수 병과 2종 (체력 75): 🎖️ K-해병대원 (강한 소총, 빠름, 체력 회복) · 🦅 특전사 (소음기 정밀 소총, 수류탄 4개)
+- 맵 (경기마다 랜덤): 평원 전장 · 시가전 도시 · 사막 유적 · 설원 기지. 국가 전쟁 모드도 전장 모습이 랜덤으로 바뀜.
 - AI는 플레이어들의 무기 선택·이동 경로·거점 공략 패턴을 학습해 상성 무기와 길목을 고릅니다.
-- 조작: WASD, Shift 달리기, 클릭 사격, 우클릭 조준, R 재장전, G 수류탄, 1~6 무기, Tab 점수판
+- 조작: WASD, Shift 달리기, 클릭 사격, 우클릭 조준, R 재장전, G 수류탄, 1~8 무기, Tab 점수판
 
 ### 조작
 
 | 키 | 기능 |
 |---|---|
-| 1~6 | 유닛 생산 |
+| 1~8 | 유닛 생산 |
 | E | 공장 건설 |
 | Z / X | 공격 / 방어 |
 | F / Q | 직접 참전 / 복귀 |
